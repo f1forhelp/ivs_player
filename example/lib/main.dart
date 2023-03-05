@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:ivs_player/ivs_player.dart';
 
 void main() {
@@ -16,47 +13,117 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _ivsPlayerPlugin = IvsPlayer();
-
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _ivsPlayerPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+      home: BaseScreen(),
+    );
+  }
+}
+
+class BaseScreen extends StatelessWidget {
+  const BaseScreen({
+    super.key,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: Column(
+        children: [
+          CustomTextButton(
+            label: "Player Screen",
+            ontap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlayerScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomTextButton extends StatelessWidget {
+  final String label;
+  final Function()? ontap;
+
+  const CustomTextButton({super.key, required this.label, this.ontap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: ontap,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.pink,
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        padding: const EdgeInsets.all(10),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class PlayerScreen extends StatefulWidget {
+  const PlayerScreen({super.key});
+
+  @override
+  State<PlayerScreen> createState() => _PlayerScreenState();
+}
+
+class _PlayerScreenState extends State<PlayerScreen> {
+  IvsPlayerController _ivsPlayerController = IvsPlayerController();
+
+  @override
+  void initState() {
+    super.initState();
+    inas();
+  }
+
+  inas() async {
+    await _ivsPlayerController.loadUrl(
+        url:
+            "https://takapp-media-cdn.s3.ap-south-1.amazonaws.com/production/vod_22_Nov_2022_vdt-1/video.m3u8");
+    await _ivsPlayerController.play();
+    _ivsPlayerController.isPlayerLoaded;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // backgroundColor: Colors.,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: BaseIvsPlayer(
+              ivsPlayerController: _ivsPlayerController,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              _ivsPlayerController.startPip();
+            },
+            child: Text("PIP"),
+          )
+        ],
       ),
     );
   }

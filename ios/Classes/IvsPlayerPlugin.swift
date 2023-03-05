@@ -6,7 +6,7 @@ import AmazonIVSPlayer
 public class IvsPlayerPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let factory = FLNativeViewFactory(messenger: registrar.messenger())
-        registrar.register(factory, withId: IVSConstants.channelId)
+        registrar.register(factory, withId: IVSConstants.viewTypeIvsPlayer)
     }
 }
 

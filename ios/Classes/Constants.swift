@@ -7,5 +7,7 @@ import Foundation
 
 
 public class IVSConstants {
-    static let channelId =  "f1forhelp/amazon_ivs"
+    //This is car
+//    static let channelId =  "f1forhelp/amazon_ivs"
+    static let viewTypeIvsPlayer =  "f1forhelp/ivs_player"
 }
