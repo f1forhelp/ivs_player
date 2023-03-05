@@ -1,6 +1,6 @@
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/pigeon.dart';
 
 @HostApi()
 abstract class PlayerMethod {
-  Future<void> play();
+  void play();
 }

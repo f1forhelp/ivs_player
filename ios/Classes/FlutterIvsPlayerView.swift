@@ -78,12 +78,6 @@ class FlutterIvsPlayerView: NSObject, FlutterPlatformView {
                 let pip = AVPictureInPictureController(ivsPlayerLayer: _ivsPlayerView.playerLayer)
                 
                 pip?.startPictureInPicture();
-                print( AVPictureInPictureController(ivsPlayerLayer: _ivsPlayerView.playerLayer))
-                print(_ivsPlayerView.playerLayer)
-                print(pip)
-                print(pip?.isPictureInPicturePossible)
-                print(pip?.isPictureInPictureActive)
-                print(pip?.isPictureInPictureSuspended)
                 result(nil)
             } else {
                 // Fallback on earlier versions
