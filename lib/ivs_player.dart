@@ -14,9 +14,13 @@ class IvsPlayer {
 }
 
 class BaseIvsPlayer extends StatefulWidget {
+  final Function(int)? onPlatformViewCreated;
   final IvsPlayerController ivsPlayerController;
 
-  const BaseIvsPlayer({super.key, required this.ivsPlayerController});
+  const BaseIvsPlayer(
+      {super.key,
+      required this.ivsPlayerController,
+      this.onPlatformViewCreated});
 
   @override
   State<BaseIvsPlayer> createState() => _BaseIvsPlayerState();
@@ -50,25 +54,26 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
       child: Container(
         color: Colors.pink,
         child: UiKitView(
-          onPlatformViewCreated: (id) async {
-            _ivsPlayerController._methodChannel =
-                MethodChannel("${IvsConstants.viewTypeIvsPlayer}_$id");
-            _ivsPlayerController._isPlayerViewLoaded.complete(true);
-            // widget.getPlayerController(_ivsPlayerController);
-            // _ivsPlayerController.playerState = PlayerState.playerViewLoaded;
-            // _ivsPlayerController.setState();
-            // _ivsPlayerController._methodChannel =
-            //     MethodChannel("${IvsConstants.viewTypeIvsPlayer}_$id");
-            // // isViewReady = true;
-            // await _ivsPlayerController.loadUrl(
-            //     url:
-            //         "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8");
-            // _ivsPlayerController.play();
-            // _ivsPlayerController.isPlayerLoaded = true;
-            // _ivsPlayerController._playerLoaded = true;
-            // _ivsPlayerController.notifyListeners();
-            // setState(() {});
-          },
+          onPlatformViewCreated: widget.onPlatformViewCreated,
+          // onPlatformViewCreated: (id) async {
+          //   // _ivsPlayerController._methodChannel =
+          //   //     MethodChannel("${IvsConstants.viewTypeIvsPlayer}_$id");
+          //   // _ivsPlayerController._isPlayerViewLoaded.complete(true);
+          //   // widget.getPlayerController(_ivsPlayerController);
+          //   // _ivsPlayerController.playerState = PlayerState.playerViewLoaded;
+          //   // _ivsPlayerController.setState();
+          //   // _ivsPlayerController._methodChannel =
+          //   //     MethodChannel("${IvsConstants.viewTypeIvsPlayer}_$id");
+          //   // // isViewReady = true;
+          //   // await _ivsPlayerController.loadUrl(
+          //   //     url:
+          //   //         "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8");
+          //   // _ivsPlayerController.play();
+          //   // _ivsPlayerController.isPlayerLoaded = true;
+          //   // _ivsPlayerController._playerLoaded = true;
+          //   // _ivsPlayerController.notifyListeners();
+          //   // setState(() {});
+          // },
           viewType: IvsConstants.viewTypeIvsPlayer,
           layoutDirection: TextDirection.ltr,
           creationParams: creationParams,

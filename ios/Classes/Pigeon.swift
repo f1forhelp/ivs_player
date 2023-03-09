@@ -31,16 +31,46 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol PlayerMethod {
+protocol IvsPlayerApi {
+  func pause() throws
+  func load(url: String) throws
   func play() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
-class PlayerMethodSetup {
-  /// The codec used by PlayerMethod.
-  /// Sets up an instance of `PlayerMethod` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: PlayerMethod?) {
-    let playChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.PlayerMethod.play", binaryMessenger: binaryMessenger)
+class IvsPlayerApiSetup {
+  /// The codec used by IvsPlayerApi.
+  /// Sets up an instance of `IvsPlayerApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IvsPlayerApi?) {
+    let pauseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.pause", binaryMessenger: binaryMessenger)
+    if let api = api {
+      pauseChannel.setMessageHandler { _, reply in
+        do {
+          try api.pause()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pauseChannel.setMessageHandler(nil)
+    }
+    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.load", binaryMessenger: binaryMessenger)
+    if let api = api {
+      loadChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let urlArg = args[0] as! String
+        do {
+          try api.load(url: urlArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      loadChannel.setMessageHandler(nil)
+    }
+    let playChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.play", binaryMessenger: binaryMessenger)
     if let api = api {
       playChannel.setMessageHandler { _, reply in
         do {
