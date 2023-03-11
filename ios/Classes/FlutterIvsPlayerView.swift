@@ -12,14 +12,13 @@ import AVKit
 import AmazonIVSPlayer
 
 
-class FlutterIvsPlayerView: NSObject, FlutterPlatformView , IvsPlayerApi {
 
-    private var _ivsPlayerView: IVSPlayerView
-    private var _ivsPlayer:IVSPlayer
+class FlutterIvsPlayerView: NSObject, FlutterPlatformView  {
 
+    private var viewId: Int32
+    
     func view() -> UIView {
-        _ivsPlayerView.player = _ivsPlayer;
-        return _ivsPlayerView
+        return CacheUtil.i.getPlayerView(key: viewId)!
     }
     
     init(
@@ -28,70 +27,15 @@ class FlutterIvsPlayerView: NSObject, FlutterPlatformView , IvsPlayerApi {
         arguments args: Any?,
         binaryMessenger messenger: FlutterBinaryMessenger
     ) {
-        _ivsPlayerView = IVSPlayerView()
-        _ivsPlayer = IVSPlayer()
+        self.viewId = Int32(exactly: viewId) ?? 0
+        let ivsPlayer = IVSPlayerView()
+        ivsPlayer.player = IVSPlayer()
         
+        CacheUtil.i.setPlayerView(key:self.viewId, playerInstance: ivsPlayer)
         super.init()
         IvsPlayerApiSetup.setUp(binaryMessenger: messenger, api: self)
-        _ivsPlayer.delegate = self
     }
     
-    func pause() throws {
-        return _ivsPlayer.pause()
-    }
-    
-    func load(url: String) throws {
-        return _ivsPlayer.load(URL(string: url));
-    }
-    
-    func play() throws {
-        return _ivsPlayer.play()
-    }
-    
-    
-    
-//    func onMethodCall(call: FlutterMethodCall, result: FlutterResult) {
-//       let args = call.arguments
-//
-//        switch(call.method){
-//        case "autoQualityMode-s":
-//            _ivsPlayer.autoQualityMode = (args as? Bool) ?? true
-//            result(nil)
-//        case "autoQualityMode-g":
-//            result(_ivsPlayer.autoQualityMode)
-//        case "looping-s":
-//            _ivsPlayer.looping = (args as? Bool) ?? true
-//            result(nil)
-//        case "looping-g":
-//            result(_ivsPlayer.looping)
-//
-//
-////        case "play":
-////            _ivsPlayer.play();
-//        case "load":
-//            if(args != nil){
-//                let url = args as! String
-//                _ivsPlayer.load(URL(string: url));
-//                result(nil)
-//            }
-//
-//        case "play":
-//            _ivsPlayer.play()
-//            result(nil)
-//        case "enable_pip":
-//            if #available(iOS 15.0, *) {
-//                let pip = AVPictureInPictureController(ivsPlayerLayer: _ivsPlayerView.playerLayer)
-//
-//                pip?.startPictureInPicture();
-//                result(nil)
-//            } else {
-//                // Fallback on earlier versions
-//            }
-//
-//          default:
-//              result(FlutterMethodNotImplemented)
-//          }
-//      }
 }
 
 
@@ -105,3 +49,85 @@ extension FlutterIvsPlayerView: IVSPlayer.Delegate {
     }
 }
 
+extension FlutterIvsPlayerView: IvsPlayerApi {
+    func playbackPosition(viewMessage: ViewMessage) throws -> Double {
+        return CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.position.seconds ?? 0.0
+    }
+    
+    
+    func autoQualityMode(mode: AutoQualityModeMessage) throws -> Bool {
+        let p = CacheUtil.i.getPlayerView(key: mode.viewId)?.player
+        if(mode.autoQualityMode != nil){
+            p?.autoQualityMode = mode.autoQualityMode!
+            return mode.autoQualityMode!
+        }else{
+            return p?.autoQualityMode ?? true
+        }
+    }
+    
+    func looping(loopingMessage: LoopingMessage) throws -> Bool {
+        let p = CacheUtil.i.getPlayerView(key: loopingMessage.viewId)?.player
+        if(loopingMessage.looping != nil){
+            p?.looping = loopingMessage.looping!
+            return loopingMessage.looping!
+        }else{
+            return p?.looping ?? true
+        }
+    }
+    
+    func muted(mutedMessage: MutedMessage) throws -> Bool {
+        let p = CacheUtil.i.getPlayerView(key: mutedMessage.viewId)?.player
+        if(mutedMessage.muted != nil){
+            p?.muted = mutedMessage.muted!
+            return mutedMessage.muted!
+        }else{
+            return p?.muted ?? true
+        }
+    }
+    
+    func playbackRate(playbackRateMessage: PlaybackRateMessage) throws -> Double {
+        let p = CacheUtil.i.getPlayerView(key: playbackRateMessage.viewId)?.player
+        if(playbackRateMessage.playbackRate != nil){
+            p?.playbackRate = Float(playbackRateMessage.playbackRate ?? 0.0)
+            return playbackRateMessage.playbackRate!
+        }else{
+            return Double(p?.playbackRate ?? 0.0)
+        }
+    }
+    
+    func volume(volumeMessage: VolumeMessage) throws -> Double {
+        let p = CacheUtil.i.getPlayerView(key: volumeMessage.viewId)?.player
+        if(volumeMessage.volume != nil){
+            p?.volume = Float(volumeMessage.volume ?? 0.0)
+            return volumeMessage.volume!
+        }else{
+            return Double(p?.volume ?? 0.0)
+        }
+    }
+    
+    func videoDuration(viewMessage: ViewMessage) throws -> Double {
+        let p = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player
+        return p?.duration.seconds ?? 0.0
+    }
+    
+    
+    func seekTo(seekMessage: SeekMessage) throws {
+        CacheUtil.i.getPlayerView(key: seekMessage.viewId)?.player?.seek(to: CMTime(seconds: seekMessage.seconds, preferredTimescale: 1))
+    }
+
+    func pause(viewMessage: ViewMessage) throws {
+        CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.pause()
+    }
+    
+    func load(loadMessage: LoadMessage) throws {
+        CacheUtil.i.getPlayerView(key: loadMessage.viewId)?.player?.load(URL(string: loadMessage.url))
+    }
+    
+    func play(viewMessage: ViewMessage) throws {
+        CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.play()
+    }
+    
+    func dispose(viewMessage: ViewMessage) throws {
+        CacheUtil.i.removePlayer(key: viewMessage.viewId)
+    }
+}

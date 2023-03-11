@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:ivs_player/ivs_player.dart';
 import 'package:ivs_player_example/widgets.dart';
@@ -5,6 +7,7 @@ import 'package:ivs_player_example/widgets.dart';
 import 'basic_player_screen.dart';
 
 void main() {
+  Float float = Float();
   runApp(const MyApp());
 }
 
