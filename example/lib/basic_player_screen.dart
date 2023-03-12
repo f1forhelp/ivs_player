@@ -31,21 +31,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     await _ivsPlayerController1.play();
   }
 
-  // initPlayer2() async {
-  //   await _ivsPlayerController2.load(
-  //       url:
-  //           "https://vod.thelallantop.com/output-videos-transcoded/vod_10_Mar_2023_lallantop_show_1195/video_Ott_Hls_Ts_Avc_Aac_16x9_1280x720p_1Mbps_qvbr.m3u8");
-  //   await _ivsPlayerController2.play();
-  // }
-
-  // @override
-  // void dispose() async {
-  //   if (mounted) {
-  //     _ivsPlayerController.dispose();
-  //   }
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Color iconColor = Colors.white;
@@ -59,6 +44,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       // backgroundColor: Colors.,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
             children: [
@@ -91,21 +77,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                   size: iconSize * largeIconScale,
                                   shadows: iconShadow,
                                 ),
-                                Visibility(
-                                  visible: false,
-                                  replacement: Icon(
-                                    Icons.pause,
-                                    color: iconColor,
-                                    size: iconSize * largeIconScale,
-                                    shadows: iconShadow,
-                                  ),
-                                  child: Icon(
-                                    Icons.play_arrow,
-                                    color: iconColor,
-                                    size: iconSize * largeIconScale,
-                                    shadows: iconShadow,
-                                  ),
-                                ),
+                                PlayPauseButton(
+                                    iconColor: iconColor,
+                                    iconSize: iconSize,
+                                    largeIconScale: largeIconScale,
+                                    iconShadow: iconShadow),
                                 Icon(
                                   Icons.skip_next,
                                   color: iconColor,
@@ -114,29 +90,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                                 ),
                               ],
                             ),
-                            CustomSlider(width: double.infinity, height: 10),
-                            // SizedBox(
-                            //   height: 20,
-                            //   child: FutureBuilder<double>(
-                            //     future: _ivsPlayerController1.videoDuration(),
-                            //     builder: (context, future) {
-                            //       if (future.connectionState ==
-                            //               ConnectionState.done &&
-                            //           future.hasData) {
-                            //         return Slider(
-                            //           value: future.data!,
-                            //           max: future.data!,
-                            //           min: 0,
-                            //           divisions: future.data?.ceil(),
-                            //           onChanged: (value) {
-                            //             _ivsPlayerController1.seekTo(value);
-                            //           },
-                            //         );
-                            //       }
-                            //       return const SizedBox();
-                            //     },
-                            //   ),
-                            // )
+                            CustomSlider(
+                              activeTrackColor: Colors.white,
+                              bufferedTrackColor: Colors.grey.shade400,
+                              inactiveTrackColor: Colors.white30,
+                              totalDuration: Duration(seconds: 232),
+                              width: 300,
+                              trackHeight: 10,
+                              thumbRadius: 10,
+                            ),
                           ],
                         ),
                       )
@@ -150,10 +112,74 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 }
 
+class PlayPauseButton extends StatefulWidget {
+  const PlayPauseButton({
+    super.key,
+    required this.iconColor,
+    required this.iconSize,
+    required this.largeIconScale,
+    required this.iconShadow,
+  });
+
+  final Color iconColor;
+  final double iconSize;
+  final double largeIconScale;
+  final List<Shadow> iconShadow;
+
+  @override
+  State<PlayPauseButton> createState() => _PlayPauseButtonState();
+}
+
+class _PlayPauseButtonState extends State<PlayPauseButton> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: false,
+      replacement: InkWell(
+        onTap: () {},
+        child: Icon(
+          Icons.pause,
+          color: widget.iconColor,
+          size: widget.iconSize * widget.largeIconScale,
+          shadows: widget.iconShadow,
+        ),
+      ),
+      child: InkWell(
+        onTap: () {},
+        child: Icon(
+          Icons.play_arrow,
+          color: widget.iconColor,
+          size: widget.iconSize * widget.largeIconScale,
+          shadows: widget.iconShadow,
+        ),
+      ),
+    );
+  }
+}
+
 class CustomSlider extends StatefulWidget {
   final double width;
-  final double height;
-  const CustomSlider({super.key, required this.width, required this.height});
+  final double trackHeight;
+  final double thumbRadius;
+  final Duration totalDuration;
+  final Color activeTrackColor;
+  final Color inactiveTrackColor;
+  final Color bufferedTrackColor;
+
+  const CustomSlider(
+      {super.key,
+      required this.width,
+      required this.trackHeight,
+      required this.thumbRadius,
+      required this.totalDuration,
+      required this.activeTrackColor,
+      required this.inactiveTrackColor,
+      required this.bufferedTrackColor});
 
   @override
   State<CustomSlider> createState() => _CustomSliderState();
@@ -161,35 +187,58 @@ class CustomSlider extends StatefulWidget {
 
 class _CustomSliderState extends State<CustomSlider> {
   double currentXAlignment = 0;
+  double currentSliderValue = 0;
+  double leftPosition = 0;
+  double innerLeftPosition = 0;
+
+  // double getLeftPadding({double? leftPadding}) {
+
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      decoration: BoxDecoration(
-        color: Colors.red,
-      ),
-      width: 300,
-      alignment: Alignment(1, 0),
-      height: widget.height,
-      child: Center(
-        child: OverflowBox(
-          maxHeight: 40,
-          maxWidth: 40,
-          minHeight: 40,
-          minWidth: 40,
-          alignment: Alignment.center,
-          child: Container(
-            height: 40,
-            alignment: Alignment.center,
-            width: 40,
-            decoration: BoxDecoration(
-              color: Colors.pink,
-              shape: BoxShape.circle,
-            ),
+    return SizedBox(
+      height: widget.thumbRadius * 2,
+      width: widget.width,
+      child: LayoutBuilder(builder: (context, constraints) {
+        // print(constraints.maxWidth);
+        return GestureDetector(
+          onHorizontalDragUpdate: (details) {
+            innerLeftPosition = details.localPosition.dx - widget.thumbRadius;
+            if (innerLeftPosition >= (-widget.thumbRadius) &&
+                innerLeftPosition <=
+                    (constraints.minWidth - widget.thumbRadius)) {
+              leftPosition = innerLeftPosition;
+              setState(() {});
+            }
+          },
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment(-1, 0),
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                ),
+                width: widget.width,
+                height: widget.trackHeight,
+              ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 20),
+                left: leftPosition,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.pink.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  width: widget.thumbRadius * 2,
+                  height: widget.thumbRadius * 2,
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
