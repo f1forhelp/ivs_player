@@ -19,6 +19,7 @@ class IvsPlayerController extends ChangeNotifier {
     await IvsPlayerApi().play(
       ViewMessage(viewId: _viewId),
     );
+    await IvsPlayerApi().muted(MutedMessage(viewId: _viewId, muted: true));
   }
 
   Future<void> pause() async {
@@ -33,6 +34,13 @@ class IvsPlayerController extends ChangeNotifier {
       LoadMessage(viewId: _viewId, url: url),
     );
     _isPlayerLoaded = true;
+    PlayerEvents()
+        .playerState
+        .receiveBroadcastStream()
+        .asBroadcastStream()
+        .listen((event) {
+      print("EVENT IS:" + event.toString());
+    });
     notifyListeners();
   }
 

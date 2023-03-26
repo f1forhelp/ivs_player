@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ivs_player/src/player_api.dart';
+import 'package:ivs_player/src/player_event_channel.dart';
 
 import 'ivs_constants.dart';
 part 'ivs_player_controller.dart';
