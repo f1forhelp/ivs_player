@@ -15,9 +15,9 @@ import AmazonIVSPlayer
 
 class FlutterIvsPlayerView: NSObject, FlutterPlatformView {
 
-    private var viewId: Int32
+    var viewId: Int32
     private let streamChannel:FlutterEventChannel
-    private var playerStateEventSink: FlutterEventSink?
+    var playerStateEventSink: FlutterEventSink?
     
     
     
@@ -63,7 +63,6 @@ class PlayerStreamHandler: NSObject,FlutterStreamHandler{
     }
     
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        events("Noobita")
         return playerView.onListenPlayerState(withArguments: arguments, eventSink: events)
     }
     
@@ -73,25 +72,40 @@ class PlayerStreamHandler: NSObject,FlutterStreamHandler{
 }
 
 
-extension FlutterIvsPlayerView: IVSPlayer.Delegate {
-    func player(_ player: IVSPlayer, didChangeState state: IVSPlayer.State) {
-        print(state);
-        if state == .ready {
-            playerStateEventSink?("Ready")
-//            streamChannel/
-            print("STATE IS : ready");
-//            player.play()
-        }
-        if state == .playing {
-            playerStateEventSink?("Playing")
-            print("STATE IS : playing");
-//            player.play()
-        }
-        if state == .idle {
-            playerStateEventSink?("Idle")
-            print("STATE IS : idle");
-//            player.play()
-        }
 
-    }
-}
+
+
+/// Total duration of the loaded media stream.
+///
+/// This property is key-value observable.
+/// @see `-[IVSPlayerDelegate player:didChangeDuration]`
+
+//extension FlutterIvsPlayerView{
+//    func player(_ player: IVSPlayer, didChangeDuration state: IVSPlayer.State) {
+//        print("TOTAL-P:\(state)")
+//    }
+//}
+
+///// Fatal error encountered during playback.
+/////
+///// This property is key-value observable.
+///// @see `-[IVSPlayerDelegate player:didFailWithError:]`
+//@property (nonatomic, readonly, nullable) NSError *error;
+//extension FlutterIvsPlayerView{
+//    func errorIs(_ player: IVSPlayer, didFailWithError state: IVSPlayer.State) {
+//        switch (state){
+//        case .ready:
+//                self.playerStateEventSink?(1)
+//        case .idle:
+//                self.playerStateEventSink?(2)
+//        case .playing:
+//                self.playerStateEventSink?(3)
+//        case .buffering:
+//                self.playerStateEventSink?(4)
+//        case .ended:
+//                self.playerStateEventSink?(5)
+//        default:
+//            self.playerStateEventSink?(-1)
+//        }
+//    }
+//}

@@ -277,7 +277,7 @@ class IvsPlayerApiCodec: FlutterStandardMessageCodec {
 protocol IvsPlayerApi {
   func autoQualityMode(mode: AutoQualityModeMessage) throws -> Bool
   func looping(loopingMessage: LoopingMessage) throws -> Bool
-  func muted(mutedMessage: MutedMessage) throws -> Bool
+  func mute(mutedMessage: MutedMessage) throws -> Bool
   func playbackRate(playbackRateMessage: PlaybackRateMessage) throws -> Double
   func volume(volumeMessage: VolumeMessage) throws -> Double
   func videoDuration(viewMessage: ViewMessage) throws -> Double
@@ -325,20 +325,20 @@ class IvsPlayerApiSetup {
     } else {
       loopingChannel.setMessageHandler(nil)
     }
-    let mutedChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.muted", binaryMessenger: binaryMessenger, codec: codec)
+    let muteChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.mute", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      mutedChannel.setMessageHandler { message, reply in
+      muteChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let mutedMessageArg = args[0] as! MutedMessage
         do {
-          let result = try api.muted(mutedMessage: mutedMessageArg)
+          let result = try api.mute(mutedMessage: mutedMessageArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      mutedChannel.setMessageHandler(nil)
+      muteChannel.setMessageHandler(nil)
     }
     let playbackRateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.playbackRate", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

@@ -11,7 +11,7 @@ import 'package:pigeon/pigeon.dart';
 abstract class IvsPlayerApi {
   bool autoQualityMode(AutoQualityModeMessage mode);
   bool looping(LoopingMessage loopingMessage);
-  bool muted(MutedMessage mutedMessage);
+  bool mute(MutedMessage mutedMessage);
   double playbackRate(PlaybackRateMessage playbackRateMessage);
   double volume(VolumeMessage volumeMessage);
   double videoDuration(ViewMessage viewMessage);

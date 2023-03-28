@@ -12,7 +12,7 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   final IvsPlayerController _ivsPlayerController1 = IvsPlayerController();
-  // final IvsPlayerController _ivsPlayerController2 = IvsPlayerController();
+  final IvsPlayerController _ivsPlayerController2 = IvsPlayerController();
 
   @override
   void initState() {
@@ -21,14 +21,26 @@ class _PlayerScreenState extends State<PlayerScreen> {
       setState(() {});
     });
     initPlayer1();
-    // initPlayer2();
+    initPlayer2();
   }
 
   initPlayer1() async {
+    await _ivsPlayerController1.initialize();
+    // await _ivsPlayerController1.load(
+    //     url:
+    //         "https://takapp-media-cdn.s3.ap-south-1.amazonaws.com/production/vod_22_Nov_2022_vdt-1/video.m3u8");
     await _ivsPlayerController1.load(
         url:
-            "https://takapp-media-cdn.s3.ap-south-1.amazonaws.com/production/vod_22_Nov_2022_vdt-1/video.m3u8");
-    await _ivsPlayerController1.play();
+            "https://static.crimetak.in/production/output-videos-transcoded/vod_23_Mar_2023_marpit/video.m3u8");
+    // await _ivsPlayerController1.play();
+  }
+
+  initPlayer2() async {
+    await _ivsPlayerController2.initialize();
+    await _ivsPlayerController2.load(
+        url:
+            "https://static.crimetak.in/production/output-videos-transcoded/vod_26_Mar_2023_delhi-jump/video.m3u8");
+    await _ivsPlayerController2.play();
   }
 
   @override
@@ -46,66 +58,73 @@ class _PlayerScreenState extends State<PlayerScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
-            children: [
-              BaseIvsPlayer(
-                ivsPlayerController: _ivsPlayerController1,
-              ),
-              Positioned.fill(
-                child: _ivsPlayerController1.isPlayerLoaded
-                    ? Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(
-                                  Icons.settings,
-                                  color: iconColor,
-                                  size: iconSize,
-                                  shadows: iconShadow,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.skip_previous,
-                                  color: iconColor,
-                                  size: iconSize * largeIconScale,
-                                  shadows: iconShadow,
-                                ),
-                                PlayPauseButton(
-                                    iconColor: iconColor,
-                                    iconSize: iconSize,
-                                    largeIconScale: largeIconScale,
-                                    iconShadow: iconShadow),
-                                Icon(
-                                  Icons.skip_next,
-                                  color: iconColor,
-                                  size: iconSize * largeIconScale,
-                                  shadows: iconShadow,
-                                ),
-                              ],
-                            ),
-                            CustomSlider(
-                              activeTrackColor: Colors.white,
-                              bufferedTrackColor: Colors.grey.shade400,
-                              inactiveTrackColor: Colors.white30,
-                              totalDuration: Duration(seconds: 232),
-                              width: 300,
-                              trackHeight: 10,
-                              thumbRadius: 10,
-                            ),
-                          ],
-                        ),
-                      )
-                    : const SizedBox(),
-              ),
-            ],
+          BaseIvsPlayer(
+            controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+            ivsPlayerController: _ivsPlayerController1,
           ),
+          // BaseIvsPlayer(
+          //   ivsPlayerController: _ivsPlayerController2,
+          // ),
+          // Stack(
+          //   children: [
+          //     BaseIvsPlayer(
+          //       ivsPlayerController: _ivsPlayerController1,
+          //     ),
+          //     Positioned.fill(
+          //       child: _ivsPlayerController1.isPlayerInitialized
+          //           ? Padding(
+          //               padding: const EdgeInsets.all(12.0),
+          //               child: Column(
+          //                 children: [
+          //                   Row(
+          //                     mainAxisAlignment: MainAxisAlignment.end,
+          //                     children: [
+          //                       Icon(
+          //                         Icons.settings,
+          //                         color: iconColor,
+          //                         size: iconSize,
+          //                         shadows: iconShadow,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                   Row(
+          //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //                     children: [
+          //                       Icon(
+          //                         Icons.skip_previous,
+          //                         color: iconColor,
+          //                         size: iconSize * largeIconScale,
+          //                         shadows: iconShadow,
+          //                       ),
+          //                       PlayPauseButton(
+          //                           iconColor: iconColor,
+          //                           iconSize: iconSize,
+          //                           largeIconScale: largeIconScale,
+          //                           iconShadow: iconShadow),
+          //                       Icon(
+          //                         Icons.skip_next,
+          //                         color: iconColor,
+          //                         size: iconSize * largeIconScale,
+          //                         shadows: iconShadow,
+          //                       ),
+          //                     ],
+          //                   ),
+          //                   CustomSlider(
+          //                     activeTrackColor: Colors.white,
+          //                     bufferedTrackColor: Colors.grey.shade400,
+          //                     inactiveTrackColor: Colors.white30,
+          //                     totalDuration: const Duration(seconds: 232),
+          //                     width: 300,
+          //                     trackHeight: 10,
+          //                     thumbRadius: 10,
+          //                   ),
+          //                 ],
+          //               ),
+          //             )
+          //           : const SizedBox(),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

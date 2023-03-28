@@ -36,7 +36,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
         }
     }
     
-    func muted(mutedMessage: MutedMessage) throws -> Bool {
+    func mute(mutedMessage: MutedMessage) throws -> Bool {
         let p = CacheUtil.i.getPlayerView(key: mutedMessage.viewId)?.player
         if(mutedMessage.muted != nil){
             p?.muted = mutedMessage.muted!

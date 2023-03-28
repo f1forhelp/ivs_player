@@ -333,9 +333,9 @@ class IvsPlayerApi {
     }
   }
 
-  Future<bool> muted(MutedMessage arg_mutedMessage) async {
+  Future<bool> mute(MutedMessage arg_mutedMessage) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.IvsPlayerApi.muted', codec,
+        'dev.flutter.pigeon.IvsPlayerApi.mute', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_mutedMessage]) as List<Object?>?;
