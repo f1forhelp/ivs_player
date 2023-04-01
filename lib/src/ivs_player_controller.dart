@@ -67,19 +67,19 @@ class IvsPlayerController extends ChangeNotifier implements TickerProvider {
           _totalDuration = p0.duration!;
           seekController.duration = _totalDuration;
           // seekController.duration = Duration(seconds: 20);
-          notifyListeners();
         }
         print(p0.playerState);
         if (p0.playerState == PlayerState.ended) {
           _isPlaying = false;
-          notifyListeners();
         }
         if (p0.playerState == PlayerState.playing) {
           seekController.forward();
         } else {
+          _isPlaying = false;
           print(seekController.value);
           seekController.stop(canceled: false);
         }
+        notifyListeners();
       },
     );
     notifyListeners();
@@ -138,12 +138,11 @@ class IvsPlayerController extends ChangeNotifier implements TickerProvider {
   }
 
   Future<void> seekTo(double seconds) async {
-    if (_isPlaying) {
-      seekController.forward();
-    }
+    // if (_isPlaying) {
+    //   seekController.forward();
+    // }
 
-    return await IvsPlayerApi()
-        .seekTo(SeekMessage(viewId: _viewId, seconds: seconds));
+    await IvsPlayerApi().seekTo(SeekMessage(viewId: _viewId, seconds: seconds));
   }
 
   @override
@@ -154,6 +153,7 @@ class IvsPlayerController extends ChangeNotifier implements TickerProvider {
 
   @override
   Ticker createTicker(TickerCallback onTick) {
+    print(onTick);
     return Ticker(onTick);
   }
 }
