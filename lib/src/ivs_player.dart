@@ -9,6 +9,7 @@ import 'package:pausable_timer/pausable_timer.dart';
 
 import 'ivs_constants.dart';
 part 'ivs_player_controller.dart';
+part 'duration_listener.dart';
 
 class BaseIvsPlayer extends StatefulWidget {
   final IvsPlayerController ivsPlayerController;

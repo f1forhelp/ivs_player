@@ -13,7 +13,7 @@ class BasicPlayerControls extends StatefulWidget {
 class _BasicPlayerControlsState extends State<BasicPlayerControls> {
   @override
   void initState() {
-    widget.ivsPlayerController.addListener(() {
+    widget.ivsPlayerController.durationListener.addListener(() {
       setState(() {});
     });
     super.initState();
@@ -93,12 +93,10 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: AnimatedBuilder(
-                    animation: widget.ivsPlayerController.seekController.view,
+                    animation: widget.ivsPlayerController.durationListener,
                     builder: (ontext, child) {
                       return Text(
-                        "${_getDurationFormatted(widget.ivsPlayerController.getCurrentDuration() + Duration(
-                              milliseconds: 700,
-                            ))} / ${_getDurationFormatted(widget.ivsPlayerController.totalDuration)}",
+                        "${_getDurationFormatted(widget.ivsPlayerController.durationListener.currentDuration)} / ${_getDurationFormatted(widget.ivsPlayerController.totalDuration)}",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -113,37 +111,38 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: AnimatedBuilder(
-                  animation: widget.ivsPlayerController.seekController.view,
-                  builder: (context, child) {
-                    return CustomSlider(
-                      getCurrentDurationOnDrag: (p0) {},
-                      getCurrentPercentageOnDrag: (p0) {
-                        widget.ivsPlayerController.seekController.value =
-                            p0 / 100;
-                      },
-                      currentValueInPercentage:
-                          widget.ivsPlayerController.seekController.value,
-                      getCurrentPercentageOnDragStop: (p0) {
-                        widget.ivsPlayerController.seekTo(widget
-                                .ivsPlayerController.seekController.value *
-                            widget.ivsPlayerController.totalDuration.inSeconds);
-                        // widget.ivsPlayerController.seekController.value =
-                        //     p0 / 100;
-                      },
-                      getCurrentDurationOnDragStop: (d) {
-                        print(d);
-                      },
-                      key: Key(
-                          widget.ivsPlayerController.totalDuration.toString()),
-                      activeTrackColor: Colors.white,
-                      bufferedTrackColor: Colors.grey.shade400,
-                      inactiveTrackColor: Colors.white30,
-                      totalDuration: widget.ivsPlayerController.totalDuration,
-                      width: double.infinity,
-                      trackHeight: 3,
-                      thumbRadius: 10,
-                    );
-                  },
+                  animation: widget.ivsPlayerController.durationListener,
+                  builder: (context, child) => CustomSlider(
+                    currentValueInPercentage: widget.ivsPlayerController
+                        .durationListener.totalDurationInPercentage,
+                    getCurrentDurationOnDrag: (p0) {},
+                    getCurrentPercentageOnDrag: (p0) {
+                      // widget.ivsPlayerController.seekController.value = p0 / 100;
+                    },
+                    // currentValueInPercentage:
+                    //     widget.ivsPlayerController.seekController.value,
+                    getCurrentPercentageOnDragStop: (p0) {
+                      // widget.ivsPlayerController.seekTo(
+                      //     widget.ivsPlayerController.seekController.value *
+                      //         widget.ivsPlayerController.totalDuration.inSeconds);
+                      // widget.ivsPlayerController.seekController.value =
+                      //     p0 / 100;
+                      print(p0);
+                    },
+                    getCurrentDurationOnDragStop: (d) {
+                      widget.ivsPlayerController
+                          .seekTo(d.inMilliseconds / 1000);
+                    },
+                    // key: Key(
+                    //     widget.ivsPlayerController.totalDuration.toString()),
+                    activeTrackColor: Colors.white,
+                    bufferedTrackColor: Colors.grey.shade400,
+                    inactiveTrackColor: Colors.white30,
+                    totalDuration: widget.ivsPlayerController.totalDuration,
+                    width: double.infinity,
+                    trackHeight: 3,
+                    thumbRadius: 10,
+                  ),
                 ),
               ),
             ],
@@ -224,16 +223,11 @@ class _CustomSliderState extends State<CustomSlider>
                   innerLeftPosition <=
                       (constraints.minWidth - widget.thumbRadius)) {
                 percentage = (innerLeftPosition + widget.thumbRadius) /
-                    (constraints.minWidth * 0.01);
+                    (constraints.minWidth);
                 widget.getCurrentDurationOnDrag(Duration());
                 widget.getCurrentPercentageOnDrag(percentage);
                 setState(() {});
               }
-            },
-            onHorizontalDragEnd: (details) {
-              print("PER-" + percentage.toString());
-              widget.getCurrentDurationOnDragStop(Duration());
-              widget.getCurrentPercentageOnDragStop(percentage);
             },
             child: Stack(
               clipBehavior: Clip.none,

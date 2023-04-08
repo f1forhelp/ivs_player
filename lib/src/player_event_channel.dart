@@ -3,9 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-enum PlayerState { ready, idle, playing, buffering, ended, unknown }
-
-enum EventTypeIvs { playerState, duration, error }
+enum NativePlayerState { ready, idle, playing, buffering, ended, unknown }
 
 class PlayerEvents {
   static final PlayerEvents _obj = PlayerEvents._internal();
@@ -54,20 +52,20 @@ class PlayerEvents {
     return str.substring(startIndex + start.length, endIndex);
   }
 
-  PlayerState _mapPlayerStateEnum(String v) {
+  NativePlayerState _mapPlayerStateEnum(String v) {
     switch (int.tryParse(v)) {
       case 1:
-        return PlayerState.ready;
+        return NativePlayerState.ready;
       case 2:
-        return PlayerState.idle;
+        return NativePlayerState.idle;
       case 3:
-        return PlayerState.playing;
+        return NativePlayerState.playing;
       case 4:
-        return PlayerState.buffering;
+        return NativePlayerState.buffering;
       case 5:
-        return PlayerState.ended;
+        return NativePlayerState.ended;
       default:
-        return PlayerState.unknown;
+        return NativePlayerState.unknown;
     }
   }
 
@@ -77,7 +75,7 @@ class PlayerEvents {
 }
 
 class IvsPlayerNativeEvent {
-  PlayerState? playerState;
+  NativePlayerState? playerState;
   Duration? duration;
   String? error;
 

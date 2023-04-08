@@ -170,7 +170,13 @@ class PausableTimer extends ChangeNotifier {
     notifyListeners();
   }
 
-  void seekTo() {}
+  void seekTo({Duration? durationToSeek, double? percentageToSeek}) {
+    assert(durationToSeek == null && percentageToSeek == null);
+    if (durationToSeek != null) {
+      _currentDuration = durationToSeek;
+      _lastDuration = Duration.zero;
+    }
+  }
 
   @override
   void dispose() {
