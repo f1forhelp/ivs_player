@@ -90,6 +90,9 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
           ),
           IconButton(
             onPressed: () {
+              //   tempTimer.seekTo(
+              //   durationToSeek: Duration(milliseconds: 12),
+              // );
               widget.ivsPlayerController.seekTo(0);
             },
             icon: Icon(
