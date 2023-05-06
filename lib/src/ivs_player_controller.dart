@@ -99,7 +99,7 @@ class IvsPlayerController extends ChangeNotifier {
     await IvsPlayerApi().load(
       LoadMessage(viewId: _viewId, url: url),
     );
-    IvsPlayerApi().mute(MutedMessage(viewId: _viewId, muted: true));
+    // IvsPlayerApi().mute(MutedMessage(viewId: _viewId, muted: true));
     notifyListeners();
   }
 
@@ -151,10 +151,10 @@ class IvsPlayerController extends ChangeNotifier {
     // if (_isPlaying) {
     //   seekController.forward();
     // }
-
-    await IvsPlayerApi().seekTo(SeekMessage(viewId: _viewId, seconds: seconds));
+    print("DUR-SEEK-${Duration(milliseconds: (seconds * 1000).round())}");
     durationListener.seekTo(
         durationToSeek: Duration(milliseconds: (seconds * 1000).round()));
+    await IvsPlayerApi().seekTo(SeekMessage(viewId: _viewId, seconds: seconds));
   }
 
   @override

@@ -88,6 +88,15 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               ),
             ],
           ),
+          IconButton(
+            onPressed: () {
+              widget.ivsPlayerController.seekTo(0);
+            },
+            icon: Icon(
+              Icons.access_alarm,
+              color: Colors.white,
+            ),
+          ),
           Column(
             children: [
               Align(
@@ -112,37 +121,42 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: AnimatedBuilder(
                   animation: widget.ivsPlayerController.durationListener,
-                  builder: (context, child) => CustomSlider(
-                    currentValueInPercentage: widget.ivsPlayerController
-                        .durationListener.totalDurationInPercentage,
-                    getCurrentDurationOnDrag: (p0) {},
-                    getCurrentPercentageOnDrag: (p0) {
-                      // widget.ivsPlayerController.seekController.value = p0 / 100;
-                    },
-                    // currentValueInPercentage:
-                    //     widget.ivsPlayerController.seekController.value,
-                    getCurrentPercentageOnDragStop: (p0) {
-                      // widget.ivsPlayerController.seekTo(
-                      //     widget.ivsPlayerController.seekController.value *
-                      //         widget.ivsPlayerController.totalDuration.inSeconds);
-                      // widget.ivsPlayerController.seekController.value =
-                      //     p0 / 100;
-                      print(p0);
-                    },
-                    getCurrentDurationOnDragStop: (d) {
-                      widget.ivsPlayerController
-                          .seekTo(d.inMilliseconds / 1000);
-                    },
-                    // key: Key(
-                    //     widget.ivsPlayerController.totalDuration.toString()),
-                    activeTrackColor: Colors.white,
-                    bufferedTrackColor: Colors.grey.shade400,
-                    inactiveTrackColor: Colors.white30,
-                    totalDuration: widget.ivsPlayerController.totalDuration,
-                    width: double.infinity,
-                    trackHeight: 3,
-                    thumbRadius: 10,
-                  ),
+                  builder: (context, child) {
+                    print(widget
+                        .ivsPlayerController.durationListener.currentDuration);
+                    return CustomSlider(
+                      currentValueInPercentage: widget.ivsPlayerController
+                          .durationListener.currentDurationInPercentage,
+                      getCurrentDurationOnDrag: (p0) {
+                        // widget.ivsPlayerController
+                        //     .seekTo(p0.inMilliseconds / 1000);
+                      },
+                      getCurrentPercentageOnDrag: (p0) {
+                        // widget.ivsPlayerController.seekController.value = p0 / 100;
+                      },
+                      // currentValueInPercentage:
+                      //     widget.ivsPlayerController.seekController.value,
+                      getCurrentPercentageOnDragStop: (p0) {
+                        print(p0);
+                        widget.ivsPlayerController.seekTo(p0 *
+                            widget.ivsPlayerController.totalDuration.inSeconds);
+                      },
+                      getCurrentDurationOnDragStop: (d) {
+                        print("DUR-$d");
+                        // widget.ivsPlayerController
+                        //     .seekTo(d.inMilliseconds / 1000);
+                      },
+                      // key: Key(
+                      //     widget.ivsPlayerController.totalDuration.toString()),
+                      activeTrackColor: Colors.white,
+                      bufferedTrackColor: Colors.grey.shade400,
+                      inactiveTrackColor: Colors.white30,
+                      totalDuration: widget.ivsPlayerController.totalDuration,
+                      width: double.infinity,
+                      trackHeight: 3,
+                      thumbRadius: 10,
+                    );
+                  },
                 ),
               ),
             ],
@@ -193,6 +207,7 @@ class _CustomSliderState extends State<CustomSlider>
   double percentage = 0;
 
   String duration = "";
+  bool isDragging = false;
 
   @override
   void initState() {
@@ -226,8 +241,16 @@ class _CustomSliderState extends State<CustomSlider>
                     (constraints.minWidth);
                 widget.getCurrentDurationOnDrag(Duration());
                 widget.getCurrentPercentageOnDrag(percentage);
-                setState(() {});
               }
+              print("START");
+              isDragging = true;
+              setState(() {});
+            },
+            onHorizontalDragEnd: (details) {
+              isDragging = false;
+              widget.getCurrentDurationOnDragStop(Duration());
+              widget.getCurrentPercentageOnDragStop(percentage);
+              setState(() {});
             },
             child: Stack(
               clipBehavior: Clip.none,
@@ -246,9 +269,14 @@ class _CustomSliderState extends State<CustomSlider>
                 ),
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 20),
-                  left:
-                      widget.currentValueInPercentage * (constraints.minWidth) -
+                  left: isDragging
+                      ? innerLeftPosition
+                      : widget.currentValueInPercentage *
+                              (constraints.minWidth) -
                           widget.thumbRadius,
+                  // left:
+                  // widget.currentValueInPercentage * (constraints.minWidth) -
+                  //     widget.thumbRadius,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.4),

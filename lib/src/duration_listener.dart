@@ -9,11 +9,11 @@ class DurationListener extends ChangeNotifier {
 
   Duration _totalDuration = const Duration();
 
-  double _totalDurationInPercentage = 0;
+  double _currentDurationInPercentage = 0;
 
   Duration get currentDuration => _currentDuration;
   Duration get totalDuration => _totalDuration;
-  double get totalDurationInPercentage => _totalDurationInPercentage;
+  double get currentDurationInPercentage => _currentDurationInPercentage;
 
   DurationListener({required Duration totalDuration}) {
     _totalDuration = totalDuration;
@@ -27,7 +27,7 @@ class DurationListener extends ChangeNotifier {
       } else {
         _timer?.cancel();
       }
-      _totalDurationInPercentage =
+      _currentDurationInPercentage =
           _currentDuration.inMilliseconds / (_totalDuration.inMilliseconds);
       notifyListeners();
     });
@@ -49,8 +49,9 @@ class DurationListener extends ChangeNotifier {
   void seekTo({Duration? durationToSeek, double? percentageToSeek}) {
     assert(!(durationToSeek == null && percentageToSeek == null));
     if (durationToSeek != null) {
-      _currentDuration = durationToSeek;
-      _lastDuration = Duration.zero;
+      // _currentDuration = durationToSeek;
+      _lastDuration = durationToSeek;
+      notifyListeners();
     }
   }
 

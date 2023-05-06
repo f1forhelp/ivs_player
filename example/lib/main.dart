@@ -82,7 +82,7 @@ class DemoTimer extends StatefulWidget {
 }
 
 class _DemoTimerState extends State<DemoTimer> {
-  PausableTimer tempTimer = PausableTimer(totalDuration: Duration(seconds: 11));
+  PausableTimer tempTimer = PausableTimer(totalDuration: Duration(seconds: 30));
 
   @override
   void initState() {
@@ -121,6 +121,15 @@ class _DemoTimerState extends State<DemoTimer> {
             label: "Pause",
             ontap: () {
               tempTimer.pause();
+            },
+          ),
+          CustomTextButton(
+            label: "Seek",
+            ontap: () {
+              tempTimer.seekTo(
+                durationToSeek:
+                    tempTimer.currentDuration + Duration(seconds: 10),
+              );
             },
           ),
           Text(tempTimer.currentDuration.toString()),
@@ -170,11 +179,15 @@ class PausableTimer extends ChangeNotifier {
     notifyListeners();
   }
 
-  void seekTo({Duration? durationToSeek, double? percentageToSeek}) {
-    assert(durationToSeek == null && percentageToSeek == null);
+  void seekTo({Duration? durationToSeek}) {
+    // assert(durationToSeek == null && percentageToSeek == null);
     if (durationToSeek != null) {
-      _currentDuration = durationToSeek;
-      _lastDuration = Duration.zero;
+      _timer?.cancel();
+
+      _currentDuration = Duration.zero;
+      // _lastDuration = Duration.zero;
+      _lastDuration = durationToSeek;
+      start();
     }
   }
 
