@@ -138,6 +138,31 @@ struct MutedMessage {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct FQualityMessage {
+  var viewId: Int32
+  var quality: FQuality? = nil
+
+  static func fromList(_ list: [Any]) -> FQualityMessage? {
+    let viewId = list[0] as! Int32
+    var quality: FQuality? = nil
+    if let qualityList = list[1] as! [Any]? {
+      quality = FQuality.fromList(qualityList as [Any])
+    }
+
+    return FQualityMessage(
+      viewId: viewId,
+      quality: quality
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      viewId,
+      quality?.toList(),
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct PlaybackRateMessage {
   var viewId: Int32
   var playbackRate: Double? = nil
@@ -202,24 +227,54 @@ struct VolumeMessage {
     ]
   }
 }
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FQuality {
+  var name: String
+  var height: Int32
+  var width: Int32
+
+  static func fromList(_ list: [Any]) -> FQuality? {
+    let name = list[0] as! String
+    let height = list[1] as! Int32
+    let width = list[2] as! Int32
+
+    return FQuality(
+      name: name,
+      height: height,
+      width: width
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      name,
+      height,
+      width,
+    ]
+  }
+}
 private class IvsPlayerApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
         return AutoQualityModeMessage.fromList(self.readValue() as! [Any])
       case 129:
-        return LoadMessage.fromList(self.readValue() as! [Any])
+        return FQuality.fromList(self.readValue() as! [Any])
       case 130:
-        return LoopingMessage.fromList(self.readValue() as! [Any])
+        return FQualityMessage.fromList(self.readValue() as! [Any])
       case 131:
-        return MutedMessage.fromList(self.readValue() as! [Any])
+        return LoadMessage.fromList(self.readValue() as! [Any])
       case 132:
-        return PlaybackRateMessage.fromList(self.readValue() as! [Any])
+        return LoopingMessage.fromList(self.readValue() as! [Any])
       case 133:
-        return SeekMessage.fromList(self.readValue() as! [Any])
+        return MutedMessage.fromList(self.readValue() as! [Any])
       case 134:
-        return ViewMessage.fromList(self.readValue() as! [Any])
+        return PlaybackRateMessage.fromList(self.readValue() as! [Any])
       case 135:
+        return SeekMessage.fromList(self.readValue() as! [Any])
+      case 136:
+        return ViewMessage.fromList(self.readValue() as! [Any])
+      case 137:
         return VolumeMessage.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -232,26 +287,32 @@ private class IvsPlayerApiCodecWriter: FlutterStandardWriter {
     if let value = value as? AutoQualityModeMessage {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? LoadMessage {
+    } else if let value = value as? FQuality {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? LoopingMessage {
+    } else if let value = value as? FQualityMessage {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? MutedMessage {
+    } else if let value = value as? LoadMessage {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? PlaybackRateMessage {
+    } else if let value = value as? LoopingMessage {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? SeekMessage {
+    } else if let value = value as? MutedMessage {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? ViewMessage {
+    } else if let value = value as? PlaybackRateMessage {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? VolumeMessage {
+    } else if let value = value as? SeekMessage {
       super.writeByte(135)
+      super.writeValue(value.toList())
+    } else if let value = value as? ViewMessage {
+      super.writeByte(136)
+      super.writeValue(value.toList())
+    } else if let value = value as? VolumeMessage {
+      super.writeByte(137)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -282,6 +343,8 @@ protocol IvsPlayerApi {
   func volume(volumeMessage: VolumeMessage) throws -> Double
   func videoDuration(viewMessage: ViewMessage) throws -> Double
   func playbackPosition(viewMessage: ViewMessage) throws -> Double
+  func qualities(viewMessage: ViewMessage) throws -> [FQuality]
+  func quality(qualityMessage: FQualityMessage) throws -> FQuality
   func pause(viewMessage: ViewMessage) throws
   func load(loadMessage: LoadMessage) throws
   func play(viewMessage: ViewMessage) throws
@@ -399,6 +462,36 @@ class IvsPlayerApiSetup {
       }
     } else {
       playbackPositionChannel.setMessageHandler(nil)
+    }
+    let qualitiesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.qualities", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      qualitiesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewMessageArg = args[0] as! ViewMessage
+        do {
+          let result = try api.qualities(viewMessage: viewMessageArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      qualitiesChannel.setMessageHandler(nil)
+    }
+    let qualityChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.quality", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      qualityChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let qualityMessageArg = args[0] as! FQualityMessage
+        do {
+          let result = try api.quality(qualityMessage: qualityMessageArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      qualityChannel.setMessageHandler(nil)
     }
     let pauseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.IvsPlayerApi.pause", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

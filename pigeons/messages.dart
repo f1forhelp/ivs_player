@@ -16,6 +16,8 @@ abstract class IvsPlayerApi {
   double volume(VolumeMessage volumeMessage);
   double videoDuration(ViewMessage viewMessage);
   double playbackPosition(ViewMessage viewMessage);
+  List<FQuality> qualities(ViewMessage viewMessage);
+  FQuality quality(FQualityMessage qualityMessage);
 
   void pause(ViewMessage viewMessage);
   void load(LoadMessage loadMessage);
@@ -67,6 +69,15 @@ class MutedMessage {
   });
 }
 
+class FQualityMessage {
+  int viewId;
+  FQuality? quality;
+  FQualityMessage({
+    required this.viewId,
+    this.quality,
+  });
+}
+
 class PlaybackRateMessage {
   int viewId;
   double? playbackRate;
@@ -91,5 +102,16 @@ class VolumeMessage {
   VolumeMessage({
     required this.viewId,
     this.volume,
+  });
+}
+
+class FQuality {
+  String name;
+  int height;
+  int width;
+  FQuality({
+    required this.name,
+    required this.height,
+    required this.width,
   });
 }

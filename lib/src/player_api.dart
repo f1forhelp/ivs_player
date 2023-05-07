@@ -133,6 +133,34 @@ class MutedMessage {
   }
 }
 
+class FQualityMessage {
+  FQualityMessage({
+    required this.viewId,
+    this.quality,
+  });
+
+  int viewId;
+
+  FQuality? quality;
+
+  Object encode() {
+    return <Object?>[
+      viewId,
+      quality?.encode(),
+    ];
+  }
+
+  static FQualityMessage decode(Object result) {
+    result as List<Object?>;
+    return FQualityMessage(
+      viewId: result[0]! as int,
+      quality: result[1] != null
+          ? FQuality.decode(result[1]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
 class PlaybackRateMessage {
   PlaybackRateMessage({
     required this.viewId,
@@ -211,6 +239,37 @@ class VolumeMessage {
   }
 }
 
+class FQuality {
+  FQuality({
+    required this.name,
+    required this.height,
+    required this.width,
+  });
+
+  String name;
+
+  int height;
+
+  int width;
+
+  Object encode() {
+    return <Object?>[
+      name,
+      height,
+      width,
+    ];
+  }
+
+  static FQuality decode(Object result) {
+    result as List<Object?>;
+    return FQuality(
+      name: result[0]! as String,
+      height: result[1]! as int,
+      width: result[2]! as int,
+    );
+  }
+}
+
 class _IvsPlayerApiCodec extends StandardMessageCodec {
   const _IvsPlayerApiCodec();
   @override
@@ -218,26 +277,32 @@ class _IvsPlayerApiCodec extends StandardMessageCodec {
     if (value is AutoQualityModeMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is LoadMessage) {
+    } else if (value is FQuality) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is LoopingMessage) {
+    } else if (value is FQualityMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is MutedMessage) {
+    } else if (value is LoadMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackRateMessage) {
+    } else if (value is LoopingMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is SeekMessage) {
+    } else if (value is MutedMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is ViewMessage) {
+    } else if (value is PlaybackRateMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is VolumeMessage) {
+    } else if (value is SeekMessage) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is ViewMessage) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is VolumeMessage) {
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -250,18 +315,22 @@ class _IvsPlayerApiCodec extends StandardMessageCodec {
       case 128: 
         return AutoQualityModeMessage.decode(readValue(buffer)!);
       case 129: 
-        return LoadMessage.decode(readValue(buffer)!);
+        return FQuality.decode(readValue(buffer)!);
       case 130: 
-        return LoopingMessage.decode(readValue(buffer)!);
+        return FQualityMessage.decode(readValue(buffer)!);
       case 131: 
-        return MutedMessage.decode(readValue(buffer)!);
+        return LoadMessage.decode(readValue(buffer)!);
       case 132: 
-        return PlaybackRateMessage.decode(readValue(buffer)!);
+        return LoopingMessage.decode(readValue(buffer)!);
       case 133: 
-        return SeekMessage.decode(readValue(buffer)!);
+        return MutedMessage.decode(readValue(buffer)!);
       case 134: 
-        return ViewMessage.decode(readValue(buffer)!);
+        return PlaybackRateMessage.decode(readValue(buffer)!);
       case 135: 
+        return SeekMessage.decode(readValue(buffer)!);
+      case 136: 
+        return ViewMessage.decode(readValue(buffer)!);
+      case 137: 
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -465,6 +534,60 @@ class IvsPlayerApi {
       );
     } else {
       return (replyList[0] as double?)!;
+    }
+  }
+
+  Future<List<FQuality?>> qualities(ViewMessage arg_viewMessage) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.IvsPlayerApi.qualities', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_viewMessage]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as List<Object?>?)!.cast<FQuality?>();
+    }
+  }
+
+  Future<FQuality> quality(FQualityMessage arg_qualityMessage) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.IvsPlayerApi.quality', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_qualityMessage]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as FQuality?)!;
     }
   }
 

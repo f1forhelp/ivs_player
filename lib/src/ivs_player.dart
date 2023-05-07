@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
+import 'package:ivs_player/src/Model/native_event_model/native_event_model.dart';
 import 'package:ivs_player/src/player_api.dart';
 import 'package:ivs_player/src/player_event_channel.dart';
 import 'package:pausable_timer/pausable_timer.dart';
 
+import 'Model/native_event_model/state.dart' hide State;
 import 'ivs_constants.dart';
 part 'ivs_player_controller.dart';
 part 'duration_listener.dart';

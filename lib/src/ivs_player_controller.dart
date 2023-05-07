@@ -19,9 +19,9 @@ class IvsPlayerController extends ChangeNotifier {
   bool get isPlayerInitialized => _isPlayerInitialized;
   Duration _totalDuration = const Duration(seconds: 0);
 
-  IvsPlayerNativeEvent _ivsPlayerNativeEvent = IvsPlayerNativeEvent();
+  NativeEventModel _ivsPlayerNativeEvent = NativeEventModel();
 
-  IvsPlayerNativeEvent get ivsPlayerNativeEvent => _ivsPlayerNativeEvent;
+  NativeEventModel get ivsPlayerNativeEvent => _ivsPlayerNativeEvent;
 
   // ignore: prefer_final_fields
   int _viewId = 0;
@@ -36,7 +36,7 @@ class IvsPlayerController extends ChangeNotifier {
   DateTime as = DateTime.now();
 
   Future<void> play() async {
-    if (_ivsPlayerNativeEvent.playerState == NativePlayerState.ended) {
+    if (_ivsPlayerNativeEvent.state?.value == NativePlayerState.ended) {
       durationListener.stop();
     }
     await IvsPlayerApi().play(
@@ -58,12 +58,13 @@ class IvsPlayerController extends ChangeNotifier {
     PlayerEvents().getPlayerStateStream(
       (p0) {
         _ivsPlayerNativeEvent = p0;
-        if (p0.duration != null && (p0.duration?.inMilliseconds ?? 0) > 1) {
-          _totalDuration = p0.duration!;
+        if (p0.duration?.value != null &&
+            (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
+          _totalDuration = (p0.duration?.value)!;
           durationListener = DurationListener(totalDuration: _totalDuration);
         }
 
-        switch (p0.playerState) {
+        switch (p0.state?.value) {
           case NativePlayerState.playing:
             // if (!_isPlaying) {
             //   durationListener.stop();
@@ -85,6 +86,8 @@ class IvsPlayerController extends ChangeNotifier {
           case NativePlayerState.ready:
             _isPlaying = false;
             durationListener.pause();
+            var q = qualities();
+            print(q);
             break;
           default:
           //Player State is unknown.
@@ -145,6 +148,11 @@ class IvsPlayerController extends ChangeNotifier {
 
   Future<double> videoDuration() async {
     return await IvsPlayerApi().videoDuration(ViewMessage(viewId: _viewId));
+  }
+
+  Future qualities() async {
+    var r = await IvsPlayerApi().qualities(ViewMessage(viewId: _viewId));
+    print(r);
   }
 
   Future<void> seekTo(double seconds) async {

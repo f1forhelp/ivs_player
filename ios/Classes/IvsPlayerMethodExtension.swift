@@ -7,10 +7,42 @@
 
 import Foundation
 import AmazonIVSPlayer
+import AmazonIVSPlayer.IVSQuality
 
 
 
 extension FlutterIvsPlayerView: IvsPlayerApi {
+    func quality(qualityMessage: FQualityMessage) throws -> FQuality {
+        var p = CacheUtil.i.getPlayerView(key: qualityMessage.viewId)?.player
+        if(qualityMessage.quality != nil){
+            for qual in p?.qualities ?? []{
+                if(qual.name == qualityMessage.quality?.name){
+                    p?.quality = qual
+                    break
+                }
+            }
+        }
+        var q = p?.quality
+        return   FQuality(name: q?.name ?? "", height:Int32( q?.height ?? 0), width:Int32( q?.width ?? 0))
+
+    }
+    
+    
+    func qualities(viewMessage: ViewMessage) throws -> [FQuality] {
+        var q = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.qualities ?? []
+        var qualities: [FQuality] = []
+        
+        for qual in q{
+            qualities.append(FQuality(name: qual.name, height: Int32( qual.height) , width: Int32( qual.width)))
+        }
+        return qualities
+    }
+    
+    
+
+    
+
+    
     func playbackPosition(viewMessage: ViewMessage) throws -> Double {
         return CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.position.seconds ?? 0.0
     }
@@ -92,3 +124,4 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
         CacheUtil.i.removePlayer(key: viewMessage.viewId)
     }
 }
+

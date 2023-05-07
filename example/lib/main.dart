@@ -83,7 +83,7 @@ class DemoTimer extends StatefulWidget {
 
 class _DemoTimerState extends State<DemoTimer> {
   DurationListener tempTimer =
-      DurationListener(totalDuration: Duration(seconds: 5));
+      DurationListener(totalDuration: Duration(seconds: 10));
 
   @override
   void initState() {
@@ -128,7 +128,7 @@ class _DemoTimerState extends State<DemoTimer> {
             label: "Seek",
             ontap: () {
               tempTimer.seekTo(
-                durationToSeek: Duration(milliseconds: 12),
+                durationToSeek: Duration(seconds: 2),
               );
             },
           ),
@@ -136,5 +136,64 @@ class _DemoTimerState extends State<DemoTimer> {
         ],
       ),
     );
+  }
+}
+
+class PausableTimer extends ChangeNotifier {
+  Timer? _timer;
+
+  Duration _lastDuration = const Duration();
+
+  Duration _currentDuration = const Duration();
+
+  Duration _totalDuration = const Duration();
+
+  Duration get currentDuration => _currentDuration;
+
+  PausableTimer({required Duration totalDuration}) {
+    _totalDuration = totalDuration;
+  }
+
+  void start() {
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) async {
+      if (timer.isActive && _currentDuration < _totalDuration) {
+        _currentDuration =
+            Duration(milliseconds: 10 * timer.tick) + _lastDuration;
+      } else {
+        _timer?.cancel();
+      }
+      notifyListeners();
+    });
+  }
+
+  void stop() {
+    _timer?.cancel();
+    _currentDuration = Duration.zero;
+    _lastDuration = Duration.zero;
+    notifyListeners();
+  }
+
+  void pause() {
+    _timer?.cancel();
+    _lastDuration = currentDuration;
+    notifyListeners();
+  }
+
+  void seekTo({Duration? durationToSeek}) {
+    // assert(durationToSeek == null && percentageToSeek == null);
+    if (durationToSeek != null) {
+      _timer?.cancel();
+
+      _currentDuration = Duration.zero;
+      // _lastDuration = Duration.zero;
+      _lastDuration = durationToSeek;
+      start();
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
