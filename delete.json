@@ -1,0 +1,19 @@
+{
+    "state": {
+        "value": 1,
+        "viewId": ""
+    },
+    "duration": {
+        "value": 0.2,
+        "viewId": ""
+    },
+    "error": {
+        "value": "",
+        "viewId": ""
+    },
+    "quality": {
+        "width": 0,
+        "height": 0,
+        "name": ""
+    }
+}

@@ -4,10 +4,13 @@ PODS:
   - ivs_player (0.0.1):
     - AmazonIVSPlayer
     - Flutter
+  - video_player_avfoundation (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - ivs_player (from `.symlinks/plugins/ivs_player/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
 
 SPEC REPOS:
   trunk:
@@ -18,11 +21,14 @@ EXTERNAL SOURCES:
     :path: Flutter
   ivs_player:
     :path: ".symlinks/plugins/ivs_player/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/ios"
 
 SPEC CHECKSUMS:
   AmazonIVSPlayer: e9092086094e70ba1e39b3f6f57f623da05b4b27
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  ivs_player: e7eeae2e16e1c86430e1abefb11af336776c325d
+  ivs_player: ae58a94822a7c42ae6e978a6931b0ad12a4830a1
+  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 
