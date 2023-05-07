@@ -88,18 +88,18 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               ),
             ],
           ),
-          IconButton(
-            onPressed: () {
-              //   tempTimer.seekTo(
-              //   durationToSeek: Duration(milliseconds: 12),
-              // );
-              widget.ivsPlayerController.seekTo(0);
-            },
-            icon: Icon(
-              Icons.access_alarm,
-              color: Colors.white,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {
+          //     //   tempTimer.seekTo(
+          //     //   durationToSeek: Duration(milliseconds: 12),
+          //     // );
+          //     widget.ivsPlayerController.seekTo(0);
+          //   },
+          //   icon: Icon(
+          //     Icons.access_alarm,
+          //     color: Colors.white,
+          //   ),
+          // ),
           Column(
             children: [
               Align(
@@ -125,8 +125,6 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
                 child: AnimatedBuilder(
                   animation: widget.ivsPlayerController.durationListener,
                   builder: (context, child) {
-                    print(widget
-                        .ivsPlayerController.durationListener.currentDuration);
                     return CustomSlider(
                       currentValueInPercentage: widget.ivsPlayerController
                           .durationListener.currentDurationInPercentage,
@@ -140,12 +138,10 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
                       // currentValueInPercentage:
                       //     widget.ivsPlayerController.seekController.value,
                       getCurrentPercentageOnDragStop: (p0) {
-                        print(p0);
                         widget.ivsPlayerController.seekTo(p0 *
                             widget.ivsPlayerController.totalDuration.inSeconds);
                       },
                       getCurrentDurationOnDragStop: (d) {
-                        print("DUR-$d");
                         // widget.ivsPlayerController
                         //     .seekTo(d.inMilliseconds / 1000);
                       },
@@ -233,19 +229,19 @@ class _CustomSliderState extends State<CustomSlider>
       width: widget.width,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // print(constraints.maxWidth);
           return GestureDetector(
             onHorizontalDragUpdate: (details) {
-              innerLeftPosition = details.localPosition.dx - widget.thumbRadius;
-              if (innerLeftPosition >= (-widget.thumbRadius) &&
-                  innerLeftPosition <=
-                      (constraints.minWidth - widget.thumbRadius)) {
+              double actualPosi = details.localPosition.dx - widget.thumbRadius;
+              if (actualPosi >= (-widget.thumbRadius) &&
+                  actualPosi <= (constraints.minWidth - widget.thumbRadius)) {
+                innerLeftPosition = actualPosi;
+
                 percentage = (innerLeftPosition + widget.thumbRadius) /
                     (constraints.minWidth);
                 widget.getCurrentDurationOnDrag(Duration());
                 widget.getCurrentPercentageOnDrag(percentage);
               }
-              print("START");
+              // print(inne);
               isDragging = true;
               setState(() {});
             },
@@ -320,9 +316,13 @@ class PlayPauseButton extends StatefulWidget {
   State<PlayPauseButton> createState() => _PlayPauseButtonState();
 }
 
-class _PlayPauseButtonState extends State<PlayPauseButton> {
+class _PlayPauseButtonState extends State<PlayPauseButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
   @override
   void initState() {
+    _animationController = AnimationController(vsync: this);
     super.initState();
   }
 
@@ -330,20 +330,29 @@ class _PlayPauseButtonState extends State<PlayPauseButton> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: widget.onTap,
-      child: Visibility(
-        visible: !widget.isPlaying,
-        replacement: Icon(
-          Icons.pause,
-          color: widget.iconColor,
-          size: widget.iconSize * widget.largeIconScale,
-          shadows: widget.iconShadow,
-        ),
-        child: Icon(
-          Icons.play_arrow,
-          color: widget.iconColor,
-          size: widget.iconSize * widget.largeIconScale,
-          shadows: widget.iconShadow,
-        ),
+      child: AnimatedSwitcher(
+        duration: Duration(milliseconds: 160),
+        child: widget.isPlaying
+            ? Icon(
+                Icons.pause,
+                key: Key("pause"),
+                color: widget.iconColor,
+                size: widget.iconSize * widget.largeIconScale,
+                shadows: widget.iconShadow,
+              )
+            : Icon(
+                Icons.play_arrow,
+                key: Key("play"),
+                color: widget.iconColor,
+                size: widget.iconSize * widget.largeIconScale,
+                shadows: widget.iconShadow,
+              ),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
       ),
     );
   }

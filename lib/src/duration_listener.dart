@@ -9,11 +9,13 @@ class DurationListener extends ChangeNotifier {
 
   Duration _totalDuration = const Duration();
 
-  double _currentDurationInPercentage = 0;
+  // double _currentDurationInPercentage = 0;
 
   Duration get currentDuration => _currentDuration;
   Duration get totalDuration => _totalDuration;
-  double get currentDurationInPercentage => _currentDurationInPercentage;
+  double get currentDurationInPercentage => _totalDuration.inMilliseconds > 0
+      ? (_currentDuration.inMilliseconds / (_totalDuration.inMilliseconds))
+      : 0;
 
   DurationListener({required Duration totalDuration}) {
     _totalDuration = totalDuration;
@@ -21,15 +23,14 @@ class DurationListener extends ChangeNotifier {
 
   void start() {
     _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      if (timer.isActive && _currentDuration <= _totalDuration) {
+      if (timer.isActive && _currentDuration < _totalDuration) {
         _currentDuration =
             Duration(milliseconds: 10 * timer.tick) + _lastDuration;
       } else {
         _timer?.cancel();
       }
-      _currentDurationInPercentage =
-          _currentDuration.inMilliseconds / (_totalDuration.inMilliseconds);
-      // print("DME-${_currentDurationInPercentage}");
+      // _currentDurationInPercentage =
+      //     _currentDuration.inMilliseconds / (_totalDuration.inMilliseconds);
       notifyListeners();
     });
   }
@@ -53,9 +54,11 @@ class DurationListener extends ChangeNotifier {
     bool isPlayingAlready = _timer?.isActive ?? false;
 
     if (durationToSeek != null) {
+      _lastDuration =
+          durationToSeek > _totalDuration ? _totalDuration : durationToSeek;
+      print("DURAT--2--${_lastDuration}");
+      _currentDuration = _lastDuration;
       _timer?.cancel();
-
-      _lastDuration = durationToSeek;
 
       if (isPlayingAlready) {
         start();

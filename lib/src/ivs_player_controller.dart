@@ -57,6 +57,7 @@ class IvsPlayerController extends ChangeNotifier {
     _isPlayerInitialized = true;
     PlayerEvents().getPlayerStateStream(
       (p0) {
+        print(p0.toString());
         _ivsPlayerNativeEvent = p0;
         if (p0.duration?.value != null &&
             (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
@@ -87,7 +88,6 @@ class IvsPlayerController extends ChangeNotifier {
             _isPlaying = false;
             durationListener.pause();
             var q = qualities();
-            print(q);
             break;
           default:
           //Player State is unknown.
@@ -152,17 +152,34 @@ class IvsPlayerController extends ChangeNotifier {
 
   Future qualities() async {
     var r = await IvsPlayerApi().qualities(ViewMessage(viewId: _viewId));
-    print(r);
   }
 
   Future<void> seekTo(double seconds) async {
     // if (_isPlaying) {
     //   seekController.forward();
     // }
-    print("DUR-SEEK-${Duration(milliseconds: (seconds * 1000).round())}");
+
+    var duratInMili = (seconds * 1000).round();
+
+    if (duratInMili >= _totalDuration.inMilliseconds) {
+      _isPlaying = false;
+      notifyListeners();
+    }
+
     durationListener.seekTo(
-        durationToSeek: Duration(milliseconds: (seconds * 1000).round()));
-    await IvsPlayerApi().seekTo(SeekMessage(viewId: _viewId, seconds: seconds));
+        durationToSeek: Duration(milliseconds: duratInMili));
+    try {
+      await IvsPlayerApi().seekTo(
+        SeekMessage(
+          viewId: _viewId,
+          seconds: duratInMili > _totalDuration.inMilliseconds
+              ? (_totalDuration.inMilliseconds / 1000)
+              : seconds,
+        ),
+      );
+    } catch (e) {
+      print("DURAT--3--$e");
+    }
   }
 
   @override

@@ -13,7 +13,7 @@ import AmazonIVSPlayer.IVSQuality
 
 extension FlutterIvsPlayerView: IvsPlayerApi {
     func quality(qualityMessage: FQualityMessage) throws -> FQuality {
-        var p = CacheUtil.i.getPlayerView(key: qualityMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: qualityMessage.viewId)?.player
         if(qualityMessage.quality != nil){
             for qual in p?.qualities ?? []{
                 if(qual.name == qualityMessage.quality?.name){
@@ -22,14 +22,14 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
                 }
             }
         }
-        var q = p?.quality
+        let q = p?.quality
         return   FQuality(name: q?.name ?? "", height:Int32( q?.height ?? 0), width:Int32( q?.width ?? 0))
 
     }
     
     
     func qualities(viewMessage: ViewMessage) throws -> [FQuality] {
-        var q = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.qualities ?? []
+        let q = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.qualities ?? []
         var qualities: [FQuality] = []
         
         for qual in q{
@@ -105,7 +105,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     
     
     func seekTo(seekMessage: SeekMessage) throws {
-        CacheUtil.i.getPlayerView(key: seekMessage.viewId)?.player?.seek(to: CMTime(seconds: seekMessage.seconds, preferredTimescale: 1))
+        CacheUtil.i.getPlayerView(key: seekMessage.viewId)?.player?.seek(to: CMTime(seconds: seekMessage.seconds, preferredTimescale: 1000))
     }
 
     func pause(viewMessage: ViewMessage) throws {
