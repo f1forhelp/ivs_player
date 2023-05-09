@@ -41,7 +41,7 @@ extension FlutterIvsPlayerView:IVSPlayer.Delegate {
     func player(_ player: IVSPlayer, didChangeDuration duration:AmazonIVSPlayer.CMTime) {
         func data (v:Double,id:Int32) -> String{
             return """
-                {"duration":{"value":\(v),"viewId":\(id)}}
+                {"duration":{"value":\(v.isNaN ? 0 : v),"viewId":\(id)}}
             """;
         }
         self.playerStateEventSink?(data(v: duration.seconds, id: viewId))

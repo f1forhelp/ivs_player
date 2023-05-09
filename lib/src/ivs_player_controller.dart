@@ -16,7 +16,9 @@ class IvsPlayerController extends ChangeNotifier {
   bool _isLiveStream = false;
   bool _isFullScreen = false;
   bool _isPictureInPictureSupported = false;
+  Quality _currentAuality = Quality();
   bool get isPlayerInitialized => _isPlayerInitialized;
+  Quality get currentQuality => _currentAuality;
   Duration _totalDuration = const Duration(seconds: 0);
 
   NativeEventModel _ivsPlayerNativeEvent = NativeEventModel();
@@ -56,12 +58,18 @@ class IvsPlayerController extends ChangeNotifier {
     PlayerEvents().getPlayerStateStream(
       (p0) {
         print("TESTDATA-${p0.toString()}");
+        print("TESTDATA-2-${_currentAuality.name}");
         _ivsPlayerNativeEvent = p0;
         if (p0.duration?.value != null &&
             (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
           print("TESTDATA-1-${p0.toString()}");
           _totalDuration = (p0.duration?.value)!;
           durationListener = DurationListener(totalDuration: _totalDuration);
+        }
+
+        if (_currentAuality.name != p0.quality?.name &&
+            p0.quality?.name != null) {
+          _currentAuality = p0.quality ?? Quality();
         }
 
         switch (p0.state?.value) {
@@ -149,8 +157,14 @@ class IvsPlayerController extends ChangeNotifier {
     return await IvsPlayerApi().videoDuration(ViewMessage(viewId: _viewId));
   }
 
-  Future qualities() async {
-    var r = await IvsPlayerApi().qualities(ViewMessage(viewId: _viewId));
+  Future<List<FQuality?>> qualities() async {
+    var q = await IvsPlayerApi().qualities(ViewMessage(viewId: _viewId));
+    return q;
+  }
+
+  Future setQuality(String name) async {
+    await IvsPlayerApi().quality(FQualityMessage(
+        viewId: _viewId, quality: FQuality(name: name, height: 0, width: 0)));
   }
 
   Future<void> seekTo(double seconds) async {

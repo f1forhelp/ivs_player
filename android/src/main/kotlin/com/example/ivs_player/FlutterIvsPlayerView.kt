@@ -54,6 +54,12 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
 //        ivsPlayer.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
         ivsPlayer.controlsEnabled = false;
         ivsPlayer.controls.showControls(false)
+//        val medi:MediaPlayer = MediaPlayer(context)
+
+
+
+
+//        ivsPlayer.controls.setPlayer(MediaPlayer(context))
         IvsPlayerApi.setUp(messenger,this)
         streamChannel = EventChannel( messenger,"EventChannelPlayerIvs")
         streamChannel.setStreamHandler(object : StreamHandler{

@@ -27,8 +27,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   initPlayer1() async {
     await _ivsPlayerController1.initialize();
     // await _ivsPlayerController1.load(
-    //     url:
-    //         "https://takapp-media-cdn.s3.ap-south-1.amazonaws.com/production/vod_22_Nov_2022_vdt-1/video.m3u8");
+    //     url: "http://cdn-fms.rbs.com.br/vod/hls_sample1_manifest.m3u8");
     await _ivsPlayerController1.load(
         url:
             "https://static.crimetak.in/production/output-videos-transcoded/vod_23_Mar_2023_marpit/video.m3u8");
@@ -60,7 +59,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         children: [
           BaseIvsPlayer(
             controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
-            ivsPlayerController: _ivsPlayerController2,
+            ivsPlayerController: _ivsPlayerController1,
           ),
           // Image.network(
           //     "https://staticg.sportskeeda.com/editor/2022/11/a402f-16694231050443-1920.jpg"),

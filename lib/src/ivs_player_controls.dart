@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ivs_player/ivs_player.dart';
+import 'package:ivs_player/src/Model/native_event_model/quality.dart';
 
 class BasicPlayerControls extends StatefulWidget {
   final IvsPlayerController ivsPlayerController;
@@ -50,11 +51,40 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(
-                Icons.settings,
-                color: iconColor,
-                size: iconSize,
-                shadows: iconShadow,
+              Visibility(
+                visible: !(widget.ivsPlayerController.currentQuality.name ==
+                        "unknown" ||
+                    widget.ivsPlayerController.currentQuality.name == null),
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    widget.ivsPlayerController.currentQuality.name ?? "",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              InkWell(
+                onTap: () {
+                  Scaffold.of(context).showBottomSheet((context) => ContextMenu(
+                      ivsPlayerController: widget.ivsPlayerController));
+                },
+                child: Icon(
+                  Icons.settings,
+                  color: iconColor,
+                  size: iconSize,
+                  shadows: iconShadow,
+                ),
               ),
             ],
           ),
@@ -353,6 +383,57 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
             child: child,
           );
         },
+      ),
+    );
+  }
+}
+
+class ContextMenu extends StatefulWidget {
+  final IvsPlayerController ivsPlayerController;
+
+  const ContextMenu({super.key, required this.ivsPlayerController});
+  @override
+  State<ContextMenu> createState() => _ContextMenuState();
+}
+
+class _ContextMenuState extends State<ContextMenu> {
+  List<Quality?> quals = [];
+
+  getQual() async {
+    var r = await widget.ivsPlayerController.qualities();
+
+    quals = r
+        .map<Quality>(
+            (e) => Quality(name: e?.name, height: e?.height, width: e?.width))
+        .toList();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getQual();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+          ),
+          ...quals.map(
+            (e) => InkWell(
+                onTap: () {
+                  widget.ivsPlayerController.setQuality(e?.name ?? "");
+                },
+                child: Text(e?.name ?? "")),
+          ),
+        ],
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:ivs_player/src/Model/native_event_model/native_event_model.dart';
+import 'package:ivs_player/src/Model/native_event_model/quality.dart';
 import 'package:ivs_player/src/player_api.dart';
 import 'package:ivs_player/src/player_event_channel.dart';
 import 'package:pausable_timer/pausable_timer.dart';
@@ -19,10 +20,14 @@ part 'duration_listener.dart';
 
 class BaseIvsPlayer extends StatefulWidget {
   final IvsPlayerController ivsPlayerController;
+  final bool useHybridCompisation;
   final Widget Function(IvsPlayerController) controls;
 
   const BaseIvsPlayer(
-      {super.key, required this.ivsPlayerController, required this.controls});
+      {super.key,
+      required this.ivsPlayerController,
+      required this.controls,
+      this.useHybridCompisation = false});
 
   @override
   State<BaseIvsPlayer> createState() => _BaseIvsPlayerState();
@@ -56,50 +61,11 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
         AspectRatio(
           aspectRatio: 16 / 9,
           child: Container(
-            color: Colors.pink,
-            child: v
-                ? PlatformViewLink(
-                    viewType: IvsConstants.viewTypeIvsPlayer,
-                    surfaceFactory: (
-                      BuildContext context,
-                      PlatformViewController controller,
-                    ) {
-                      return AndroidViewSurface(
-                        controller: controller as AndroidViewController,
-                        gestureRecognizers: const <
-                            Factory<OneSequenceGestureRecognizer>>{},
-                        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-                      );
-                    },
-                    onCreatePlatformView: (PlatformViewCreationParams params) {
-                      ExpensiveAndroidViewController controller =
-                          PlatformViewsService.initExpensiveAndroidView(
-                        id: params.id,
-                        viewType: IvsConstants.viewTypeIvsPlayer,
-                        layoutDirection: TextDirection.ltr,
-                        creationParams: creationParams,
-                        creationParamsCodec: const StandardMessageCodec(),
-                        onFocus: () => params.onFocusChanged(true),
-                      );
-                      controller.addOnPlatformViewCreatedListener(
-                        (id) {
-                          params.onPlatformViewCreated(id);
-                          // _ivsPlayerController._viewId = id;
-                          // if (!_ivsPlayerController
-                          //     ._isPlayerViewLoaded.isCompleted) {
-                          //   _ivsPlayerController._isPlayerViewLoaded
-                          //       .complete(true);
-                          // }
-                        },
-                      );
-                      return controller;
-                    },
-                  )
-                : RepaintBoundary(
-                    child: AndroidView(
-                      viewType: IvsConstants.viewTypeIvsPlayer,
-                      layoutDirection: TextDirection.ltr,
-                      creationParams: creationParams,
+              color: Colors.pink,
+              child: Builder(
+                builder: (context) {
+                  if (Platform.isIOS) {
+                    return UiKitView(
                       onPlatformViewCreated: (id) {
                         _ivsPlayerController._viewId = id;
                         if (!_ivsPlayerController
@@ -108,10 +74,72 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
                               .complete(true);
                         }
                       },
+                      viewType: IvsConstants.viewTypeIvsPlayer,
+                      layoutDirection: TextDirection.ltr,
+                      creationParams: creationParams,
                       creationParamsCodec: const StandardMessageCodec(),
-                    ),
-                  ),
-          ),
+                    );
+                  } else if (widget.useHybridCompisation) {
+                    return Expanded(
+                      child: PlatformViewLink(
+                        viewType: IvsConstants.viewTypeIvsPlayer,
+                        surfaceFactory: (
+                          BuildContext context,
+                          PlatformViewController controller,
+                        ) {
+                          return AndroidViewSurface(
+                            controller: controller as AndroidViewController,
+                            gestureRecognizers: const <
+                                Factory<OneSequenceGestureRecognizer>>{},
+                            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                          );
+                        },
+                        onCreatePlatformView:
+                            (PlatformViewCreationParams params) {
+                          ExpensiveAndroidViewController controller =
+                              PlatformViewsService.initExpensiveAndroidView(
+                            id: params.id,
+                            viewType: IvsConstants.viewTypeIvsPlayer,
+                            layoutDirection: TextDirection.ltr,
+                            creationParams: creationParams,
+                            creationParamsCodec: const StandardMessageCodec(),
+                            onFocus: () => params.onFocusChanged(true),
+                          );
+                          controller.addOnPlatformViewCreatedListener(
+                            (id) {
+                              params.onPlatformViewCreated(id);
+                              // _ivsPlayerController._viewId = id;
+                              // if (!_ivsPlayerController
+                              //     ._isPlayerViewLoaded.isCompleted) {
+                              //   _ivsPlayerController._isPlayerViewLoaded
+                              //       .complete(true);
+                              // }
+                            },
+                          );
+                          return controller;
+                        },
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                      child: AndroidView(
+                        viewType: IvsConstants.viewTypeIvsPlayer,
+                        layoutDirection: TextDirection.ltr,
+                        creationParams: creationParams,
+                        onPlatformViewCreated: (id) {
+                          _ivsPlayerController._viewId = id;
+                          if (!_ivsPlayerController
+                              ._isPlayerViewLoaded.isCompleted) {
+                            _ivsPlayerController._isPlayerViewLoaded
+                                .complete(true);
+                          }
+                        },
+                        creationParamsCodec: const StandardMessageCodec(),
+                      ),
+                    );
+                  }
+                },
+              )),
         ),
         Positioned.fill(child: widget.controls(_ivsPlayerController)),
       ],
