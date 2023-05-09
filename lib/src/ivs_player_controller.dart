@@ -42,14 +42,12 @@ class IvsPlayerController extends ChangeNotifier {
     await IvsPlayerApi().play(
       ViewMessage(viewId: _viewId),
     );
-    notifyListeners();
   }
 
   Future<void> pause() async {
     await IvsPlayerApi().pause(
       ViewMessage(viewId: _viewId),
     );
-    notifyListeners();
   }
 
   Future<void> initialize() async {
@@ -57,10 +55,11 @@ class IvsPlayerController extends ChangeNotifier {
     _isPlayerInitialized = true;
     PlayerEvents().getPlayerStateStream(
       (p0) {
-        print(p0.toString());
+        print("TESTDATA-${p0.toString()}");
         _ivsPlayerNativeEvent = p0;
         if (p0.duration?.value != null &&
             (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
+          print("TESTDATA-1-${p0.toString()}");
           _totalDuration = (p0.duration?.value)!;
           durationListener = DurationListener(totalDuration: _totalDuration);
         }

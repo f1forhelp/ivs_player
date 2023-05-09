@@ -3,10 +3,11 @@ import 'package:pigeon/pigeon.dart';
 
 //Run this commnad for changes to be visible "flutter pub run pigeon --input pigeons/messages.dart"
 @ConfigurePigeon(PigeonOptions(
-  dartOut: "lib/src/player_api.dart",
-  swiftOptions: SwiftOptions(),
-  swiftOut: "ios/Classes/Pigeon.swift",
-))
+    dartOut: "lib/src/player_api.dart",
+    swiftOptions: SwiftOptions(),
+    swiftOut: "ios/Classes/Pigeon.swift",
+    kotlinOut: "android/src/main/kotlin/com/example/ivs_player/Pigeon.kt",
+    kotlinOptions: KotlinOptions()))
 @HostApi()
 abstract class IvsPlayerApi {
   bool autoQualityMode(AutoQualityModeMessage mode);

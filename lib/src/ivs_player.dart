@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:ivs_player/src/Model/native_event_model/native_event_model.dart';
@@ -43,6 +47,7 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    bool v = false;
     // This is used in the platform side to register the view.
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
@@ -52,18 +57,60 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
           aspectRatio: 16 / 9,
           child: Container(
             color: Colors.pink,
-            child: UiKitView(
-              onPlatformViewCreated: (id) {
-                _ivsPlayerController._viewId = id;
-                if (!_ivsPlayerController._isPlayerViewLoaded.isCompleted) {
-                  _ivsPlayerController._isPlayerViewLoaded.complete(true);
-                }
-              },
-              viewType: IvsConstants.viewTypeIvsPlayer,
-              layoutDirection: TextDirection.ltr,
-              creationParams: creationParams,
-              creationParamsCodec: const StandardMessageCodec(),
-            ),
+            child: v
+                ? PlatformViewLink(
+                    viewType: IvsConstants.viewTypeIvsPlayer,
+                    surfaceFactory: (
+                      BuildContext context,
+                      PlatformViewController controller,
+                    ) {
+                      return AndroidViewSurface(
+                        controller: controller as AndroidViewController,
+                        gestureRecognizers: const <
+                            Factory<OneSequenceGestureRecognizer>>{},
+                        hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                      );
+                    },
+                    onCreatePlatformView: (PlatformViewCreationParams params) {
+                      ExpensiveAndroidViewController controller =
+                          PlatformViewsService.initExpensiveAndroidView(
+                        id: params.id,
+                        viewType: IvsConstants.viewTypeIvsPlayer,
+                        layoutDirection: TextDirection.ltr,
+                        creationParams: creationParams,
+                        creationParamsCodec: const StandardMessageCodec(),
+                        onFocus: () => params.onFocusChanged(true),
+                      );
+                      controller.addOnPlatformViewCreatedListener(
+                        (id) {
+                          params.onPlatformViewCreated(id);
+                          // _ivsPlayerController._viewId = id;
+                          // if (!_ivsPlayerController
+                          //     ._isPlayerViewLoaded.isCompleted) {
+                          //   _ivsPlayerController._isPlayerViewLoaded
+                          //       .complete(true);
+                          // }
+                        },
+                      );
+                      return controller;
+                    },
+                  )
+                : RepaintBoundary(
+                    child: AndroidView(
+                      viewType: IvsConstants.viewTypeIvsPlayer,
+                      layoutDirection: TextDirection.ltr,
+                      creationParams: creationParams,
+                      onPlatformViewCreated: (id) {
+                        _ivsPlayerController._viewId = id;
+                        if (!_ivsPlayerController
+                            ._isPlayerViewLoaded.isCompleted) {
+                          _ivsPlayerController._isPlayerViewLoaded
+                              .complete(true);
+                        }
+                      },
+                      creationParamsCodec: const StandardMessageCodec(),
+                    ),
+                  ),
           ),
         ),
         Positioned.fill(child: widget.controls(_ivsPlayerController)),

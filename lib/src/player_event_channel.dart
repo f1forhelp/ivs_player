@@ -20,6 +20,7 @@ class PlayerEvents {
 
   void getPlayerStateStream(Function(NativeEventModel) onEvent) {
     _playerState.receiveBroadcastStream().listen((event) {
+      print("TESTDATA-${jsonDecode(event.toString())}");
       onEvent(NativeEventModel.fromJson(jsonDecode(event.toString())));
     });
   }

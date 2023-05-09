@@ -13,7 +13,7 @@ class BasicPlayerControls extends StatefulWidget {
 class _BasicPlayerControlsState extends State<BasicPlayerControls> {
   @override
   void initState() {
-    widget.ivsPlayerController.durationListener.addListener(() {
+    widget.ivsPlayerController.addListener(() {
       setState(() {});
     });
     super.initState();

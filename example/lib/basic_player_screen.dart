@@ -60,8 +60,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
         children: [
           BaseIvsPlayer(
             controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
-            ivsPlayerController: _ivsPlayerController1,
+            ivsPlayerController: _ivsPlayerController2,
           ),
+          // Image.network(
+          //     "https://staticg.sportskeeda.com/editor/2022/11/a402f-16694231050443-1920.jpg"),
+          // TextButton(
+          //     onPressed: () {
+          //       setState(() {});
+          //     },
+          //     child: Text("SETSTATE")),
         ],
       ),
     );
