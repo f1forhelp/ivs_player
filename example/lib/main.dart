@@ -125,6 +125,24 @@ class _DemoTimerState extends State<DemoTimer> {
             },
           ),
           CustomTextButton(
+            label: "2",
+            ontap: () {
+              tempTimer.playBackRate(2);
+            },
+          ),
+          CustomTextButton(
+            label: "0.5",
+            ontap: () {
+              tempTimer.playBackRate(0.5);
+            },
+          ),
+          CustomTextButton(
+            label: "1",
+            ontap: () {
+              tempTimer.playBackRate(1);
+            },
+          ),
+          CustomTextButton(
             label: "Seek",
             ontap: () {
               tempTimer.seekTo(

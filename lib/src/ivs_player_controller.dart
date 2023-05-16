@@ -138,9 +138,11 @@ class IvsPlayerController extends ChangeNotifier {
   }
 
   Future<double> playbackRate({double? v}) async {
-    return await IvsPlayerApi().playbackRate(
+    var rate = await IvsPlayerApi().playbackRate(
       PlaybackRateMessage(viewId: _viewId, playbackRate: v),
     );
+    durationListener.playBackRate(v ?? 1);
+    return rate;
   }
 
   Future<double> volume({double? v}) async {

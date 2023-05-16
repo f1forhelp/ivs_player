@@ -32,6 +32,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         url:
             "https://static.crimetak.in/production/output-videos-transcoded/vod_23_Mar_2023_marpit/video.m3u8");
     // await _ivsPlayerController1.play();
+    await _ivsPlayerController1.mute(v: true);
   }
 
   initPlayer2() async {
@@ -61,6 +62,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
             controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
             ivsPlayerController: _ivsPlayerController1,
           ),
+          // BaseIvsPlayer(
+          //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+          //   ivsPlayerController: _ivsPlayerController2,
+          // ),
           // Image.network(
           //     "https://staticg.sportskeeda.com/editor/2022/11/a402f-16694231050443-1920.jpg"),
           // TextButton(

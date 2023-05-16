@@ -2,6 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:ivs_player/ivs_player.dart';
 import 'package:ivs_player/src/Model/native_event_model/quality.dart';
 
+part 'context_menu.dart';
+part 'play_pause_button.dart';
+part 'quality_panel.dart';
+part 'playback_speed_panel.dart';
+
+String _getDurationFormatted(Duration du) {
+  var sec = du.inSeconds % 60;
+  var min = du.inMinutes % 60;
+
+  var secondPadding = sec < 10 ? "0" : "";
+  var minutePadding = min < 10 && du.inHours > 0 ? "0" : "";
+
+  if (du.inHours > 0) {
+    return "${du.inHours.toString()}:${minutePadding + min.toString()}:${secondPadding + sec.toString()}";
+  } else {
+    return "${minutePadding + min.toString()}:${secondPadding + sec.toString()}";
+  }
+}
+
 class BasicPlayerControls extends StatefulWidget {
   final IvsPlayerController ivsPlayerController;
 
@@ -18,20 +37,6 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
       setState(() {});
     });
     super.initState();
-  }
-
-  String _getDurationFormatted(Duration du) {
-    var sec = du.inSeconds % 60;
-    var min = du.inMinutes % 60;
-
-    var secondPadding = sec < 10 ? "0" : "";
-    var minutePadding = min < 10 && du.inHours > 0 ? "0" : "";
-
-    if (du.inHours > 0) {
-      return "${du.inHours.toString()}:${minutePadding + min.toString()}:${secondPadding + sec.toString()}";
-    } else {
-      return "${minutePadding + min.toString()}:${secondPadding + sec.toString()}";
-    }
   }
 
   @override
@@ -76,8 +81,26 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               ),
               InkWell(
                 onTap: () {
-                  Scaffold.of(context).showBottomSheet((context) => ContextMenu(
-                      ivsPlayerController: widget.ivsPlayerController));
+                  showModalBottomSheet(
+                    useSafeArea: true,
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    constraints: BoxConstraints(maxWidth: 440),
+                    builder: (context) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: 14,
+                          right: 14,
+                          bottom:
+                              MediaQuery.of(context).viewPadding.bottom + 18,
+                        ),
+                        child: ContextMenu(
+                            ivsPlayerController: widget.ivsPlayerController),
+                      );
+                    },
+                  );
+                  // Scaffold.of(context).showBottomSheet((context) => ContextMenu(
+                  //     ivsPlayerController: widget.ivsPlayerController));
                 },
                 child: Icon(
                   Icons.settings,
@@ -97,7 +120,7 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
                 size: iconSize * largeIconScale,
                 shadows: iconShadow,
               ),
-              PlayPauseButton(
+              _PlayPauseButton(
                   onTap: () async {
                     if (widget.ivsPlayerController.isPlaying) {
                       await widget.ivsPlayerController.pause();
@@ -319,121 +342,6 @@ class _CustomSliderState extends State<CustomSlider>
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class PlayPauseButton extends StatefulWidget {
-  const PlayPauseButton({
-    super.key,
-    required this.iconColor,
-    required this.iconSize,
-    required this.largeIconScale,
-    required this.iconShadow,
-    required this.isPlaying,
-    this.onTap,
-  });
-
-  final void Function()? onTap;
-  final bool isPlaying;
-  final Color iconColor;
-  final double iconSize;
-  final double largeIconScale;
-  final List<Shadow> iconShadow;
-
-  @override
-  State<PlayPauseButton> createState() => _PlayPauseButtonState();
-}
-
-class _PlayPauseButtonState extends State<PlayPauseButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    _animationController = AnimationController(vsync: this);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.onTap,
-      child: AnimatedSwitcher(
-        duration: Duration(milliseconds: 160),
-        child: widget.isPlaying
-            ? Icon(
-                Icons.pause,
-                key: Key("pause"),
-                color: widget.iconColor,
-                size: widget.iconSize * widget.largeIconScale,
-                shadows: widget.iconShadow,
-              )
-            : Icon(
-                Icons.play_arrow,
-                key: Key("play"),
-                color: widget.iconColor,
-                size: widget.iconSize * widget.largeIconScale,
-                shadows: widget.iconShadow,
-              ),
-        transitionBuilder: (child, animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ContextMenu extends StatefulWidget {
-  final IvsPlayerController ivsPlayerController;
-
-  const ContextMenu({super.key, required this.ivsPlayerController});
-  @override
-  State<ContextMenu> createState() => _ContextMenuState();
-}
-
-class _ContextMenuState extends State<ContextMenu> {
-  List<Quality?> quals = [];
-
-  getQual() async {
-    var r = await widget.ivsPlayerController.qualities();
-
-    quals = r
-        .map<Quality>(
-            (e) => Quality(name: e?.name, height: e?.height, width: e?.width))
-        .toList();
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    getQual();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: double.infinity,
-          ),
-          ...quals.map(
-            (e) => InkWell(
-                onTap: () {
-                  widget.ivsPlayerController.setQuality(e?.name ?? "");
-                },
-                child: Text(e?.name ?? "")),
-          ),
-        ],
       ),
     );
   }

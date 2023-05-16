@@ -9,6 +9,7 @@ class DurationListener extends ChangeNotifier {
 
   Duration _totalDuration = const Duration();
 
+  double _playBackRate = 1;
   // double _currentDurationInPercentage = 0;
 
   Duration get currentDuration => _currentDuration;
@@ -45,6 +46,13 @@ class DurationListener extends ChangeNotifier {
   void pause() {
     _timer?.cancel();
     _lastDuration = currentDuration;
+    notifyListeners();
+  }
+
+  void playBackRate(double rate) {
+    _playBackRate = rate;
+    pause();
+    start();
     notifyListeners();
   }
 
