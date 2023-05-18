@@ -82,11 +82,11 @@ class DemoTimer extends StatefulWidget {
 }
 
 class _DemoTimerState extends State<DemoTimer> {
-  DurationListener tempTimer =
-      DurationListener(totalDuration: Duration(seconds: 10));
+  DurationListener tempTimer = DurationListener();
 
   @override
   void initState() {
+    tempTimer.totalDuration = Duration(seconds: 30);
     tempTimer.addListener(() {
       setState(() {});
     });
@@ -125,9 +125,9 @@ class _DemoTimerState extends State<DemoTimer> {
             },
           ),
           CustomTextButton(
-            label: "2",
+            label: "1.5",
             ontap: () {
-              tempTimer.playBackRate(2);
+              tempTimer.playBackRate(1.5);
             },
           ),
           CustomTextButton(

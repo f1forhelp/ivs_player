@@ -5,8 +5,7 @@ part of 'ivs_player.dart';
 class IvsPlayerController extends ChangeNotifier {
   // String _url = "";
 
-  DurationListener durationListener =
-      DurationListener(totalDuration: Duration.zero);
+  DurationListener durationListener = DurationListener();
 
   bool _isPlayerInitialized = false;
   bool _isBuffering = true;
@@ -64,7 +63,7 @@ class IvsPlayerController extends ChangeNotifier {
             (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
           print("TESTDATA-1-${p0.toString()}");
           _totalDuration = (p0.duration?.value)!;
-          durationListener = DurationListener(totalDuration: _totalDuration);
+          durationListener.totalDuration = _totalDuration;
         }
 
         if (_currentAuality.name != p0.quality?.name &&

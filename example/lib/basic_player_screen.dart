@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:ivs_player/ivs_player.dart';
 // import 'package:ivs_player/player_method.dart';
 import 'package:ivs_player_example/widgets.dart';
@@ -21,7 +22,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       setState(() {});
     });
     initPlayer1();
-    initPlayer2();
+    // initPlayer2();
   }
 
   initPlayer1() async {
@@ -61,6 +62,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
           BaseIvsPlayer(
             controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
             ivsPlayerController: _ivsPlayerController1,
+          ),
+          CustomTextButton(
+            label: "SetState",
+            ontap: () {
+              setState(() {});
+            },
           ),
           // BaseIvsPlayer(
           //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),

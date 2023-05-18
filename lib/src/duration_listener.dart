@@ -18,20 +18,20 @@ class DurationListener extends ChangeNotifier {
       ? (_currentDuration.inMilliseconds / (_totalDuration.inMilliseconds))
       : 0;
 
-  DurationListener({required Duration totalDuration}) {
+  set totalDuration(Duration totalDuration) {
     _totalDuration = totalDuration;
+    notifyListeners();
   }
 
   void start() {
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+    _timer = Timer.periodic(Duration(microseconds: (1000).truncate()), (timer) {
       if (timer.isActive && _currentDuration < _totalDuration) {
-        _currentDuration =
-            Duration(milliseconds: 10 * timer.tick) + _lastDuration;
+        _currentDuration = Duration(
+                microseconds: (1000 * timer.tick * _playBackRate).truncate()) +
+            _lastDuration;
       } else {
         _timer?.cancel();
       }
-      // _currentDurationInPercentage =
-      //     _currentDuration.inMilliseconds / (_totalDuration.inMilliseconds);
       notifyListeners();
     });
   }

@@ -52,6 +52,7 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    print("SetState Is Called");
     bool v = false;
     // This is used in the platform side to register the view.
     // Pass parameters to the platform side.
@@ -80,62 +81,58 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
                       creationParamsCodec: const StandardMessageCodec(),
                     );
                   } else if (widget.useHybridCompisation) {
-                    return Expanded(
-                      child: PlatformViewLink(
-                        viewType: IvsConstants.viewTypeIvsPlayer,
-                        surfaceFactory: (
-                          BuildContext context,
-                          PlatformViewController controller,
-                        ) {
-                          return AndroidViewSurface(
-                            controller: controller as AndroidViewController,
-                            gestureRecognizers: const <
-                                Factory<OneSequenceGestureRecognizer>>{},
-                            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-                          );
-                        },
-                        onCreatePlatformView:
-                            (PlatformViewCreationParams params) {
-                          ExpensiveAndroidViewController controller =
-                              PlatformViewsService.initExpensiveAndroidView(
-                            id: params.id,
-                            viewType: IvsConstants.viewTypeIvsPlayer,
-                            layoutDirection: TextDirection.ltr,
-                            creationParams: creationParams,
-                            creationParamsCodec: const StandardMessageCodec(),
-                            onFocus: () => params.onFocusChanged(true),
-                          );
-                          controller.addOnPlatformViewCreatedListener(
-                            (id) {
-                              params.onPlatformViewCreated(id);
-                              // _ivsPlayerController._viewId = id;
-                              // if (!_ivsPlayerController
-                              //     ._isPlayerViewLoaded.isCompleted) {
-                              //   _ivsPlayerController._isPlayerViewLoaded
-                              //       .complete(true);
-                              // }
-                            },
-                          );
-                          return controller;
-                        },
-                      ),
+                    return PlatformViewLink(
+                      viewType: IvsConstants.viewTypeIvsPlayer,
+                      surfaceFactory: (
+                        BuildContext context,
+                        PlatformViewController controller,
+                      ) {
+                        return AndroidViewSurface(
+                          controller: controller as AndroidViewController,
+                          gestureRecognizers: const <Factory<
+                              OneSequenceGestureRecognizer>>{},
+                          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                        );
+                      },
+                      onCreatePlatformView:
+                          (PlatformViewCreationParams params) {
+                        ExpensiveAndroidViewController controller =
+                            PlatformViewsService.initExpensiveAndroidView(
+                          id: params.id,
+                          viewType: IvsConstants.viewTypeIvsPlayer,
+                          layoutDirection: TextDirection.ltr,
+                          creationParams: creationParams,
+                          creationParamsCodec: const StandardMessageCodec(),
+                          onFocus: () => params.onFocusChanged(true),
+                        );
+                        controller.addOnPlatformViewCreatedListener(
+                          (id) {
+                            params.onPlatformViewCreated(id);
+                            // _ivsPlayerController._viewId = id;
+                            // if (!_ivsPlayerController
+                            //     ._isPlayerViewLoaded.isCompleted) {
+                            //   _ivsPlayerController._isPlayerViewLoaded
+                            //       .complete(true);
+                            // }
+                          },
+                        );
+                        return controller;
+                      },
                     );
                   } else {
-                    return Expanded(
-                      child: AndroidView(
-                        viewType: IvsConstants.viewTypeIvsPlayer,
-                        layoutDirection: TextDirection.ltr,
-                        creationParams: creationParams,
-                        onPlatformViewCreated: (id) {
-                          _ivsPlayerController._viewId = id;
-                          if (!_ivsPlayerController
-                              ._isPlayerViewLoaded.isCompleted) {
-                            _ivsPlayerController._isPlayerViewLoaded
-                                .complete(true);
-                          }
-                        },
-                        creationParamsCodec: const StandardMessageCodec(),
-                      ),
+                    return AndroidView(
+                      viewType: IvsConstants.viewTypeIvsPlayer,
+                      layoutDirection: TextDirection.ltr,
+                      creationParams: creationParams,
+                      onPlatformViewCreated: (id) {
+                        _ivsPlayerController._viewId = id;
+                        if (!_ivsPlayerController
+                            ._isPlayerViewLoaded.isCompleted) {
+                          _ivsPlayerController._isPlayerViewLoaded
+                              .complete(true);
+                        }
+                      },
+                      creationParamsCodec: const StandardMessageCodec(),
                     );
                   }
                 },
