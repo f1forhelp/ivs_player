@@ -28,7 +28,6 @@ class IvsPlayerPlugin: FlutterPlugin,IvsPlayerApi {
   private lateinit var streamChannel: EventChannel
   private  var eventSink: EventSink? = null
 
-
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     flutterState = FlutterState(
       binding.applicationContext,

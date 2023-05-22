@@ -19,17 +19,15 @@ class PlayerEvents {
 
   final EventChannel _playerState = const EventChannel("EventChannelPlayerIvs");
 
-  Stream? _eventStream;
+  // Stream? _eventStream;
 
   void getPlayerStateStream(Function(NativeEventModel) onEvent, int viewId) {
-    _eventStream ??= _playerState.receiveBroadcastStream();
+    // _eventStream ??= _playerState.receiveBroadcastStream();
 
     _playerState.receiveBroadcastStream().listen((event) {
       var model = NativeEventModel.fromJson(jsonDecode(event.toString()));
-      if (viewId == model.duration?.viewId ||
-          viewId == model.error?.viewId ||
-          viewId == model.quality?.viewId ||
-          viewId == model.state?.viewId) {
+      print("TESTDATA-${model.toString()}");
+      if (viewId == model.duration?.viewId) {
         onEvent(NativeEventModel.fromJson(jsonDecode(event.toString())));
       }
     });

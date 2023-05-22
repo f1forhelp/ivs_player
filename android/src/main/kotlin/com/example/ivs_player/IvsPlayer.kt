@@ -30,6 +30,7 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
     private var streamChannel:EventChannel
     private var eventSink:EventSink? = null
     lateinit var surface: Surface;
+    lateinit var textureRegistry: TextureRegistry.SurfaceTextureEntry
 //    private val textView: TextView
 
 //    override fun getView(): View {
@@ -39,6 +40,7 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
 //    override fun dispose() {}
 
     init {
+        this.textureRegistry = textureRegistry
         this.viewId = textureRegistry.id()
         val ivsPlayerView:PlayerView = PlayerView(context)
 
@@ -255,6 +257,7 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
 //        ivsPlayer.removeListener(ivsPlayer)
         ivsPlayer.release();
         surface.release();
+        textureRegistry.release();
         
     }
 

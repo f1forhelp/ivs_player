@@ -57,7 +57,6 @@ class IvsPlayerController extends ChangeNotifier {
     // await _isPlayerViewLoaded.future;
     _isPlayerInitialized = true;
     PlayerEvents().getPlayerStateStream((p0) {
-      print("TESTDATA-${p0.toString()}");
       _ivsPlayerNativeEvent = p0;
       if (p0.duration?.value != null &&
           (p0.duration?.value?.inMilliseconds ?? 0) > 1) {

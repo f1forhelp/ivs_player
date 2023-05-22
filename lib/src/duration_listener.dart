@@ -64,7 +64,6 @@ class DurationListener extends ChangeNotifier {
     if (durationToSeek != null) {
       _lastDuration =
           durationToSeek > _totalDuration ? _totalDuration : durationToSeek;
-      print("DURAT--2--${_lastDuration}");
       _currentDuration = _lastDuration;
       _timer?.cancel();
 
