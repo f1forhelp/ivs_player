@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:ivs_player/src/Model/native_event_model/native_event_model.dart';
@@ -18,10 +19,19 @@ class PlayerEvents {
 
   final EventChannel _playerState = const EventChannel("EventChannelPlayerIvs");
 
-  void getPlayerStateStream(Function(NativeEventModel) onEvent) {
+  Stream? _eventStream;
+
+  void getPlayerStateStream(Function(NativeEventModel) onEvent, int viewId) {
+    _eventStream ??= _playerState.receiveBroadcastStream();
+
     _playerState.receiveBroadcastStream().listen((event) {
-      print("TESTDATA-${jsonDecode(event.toString())}");
-      onEvent(NativeEventModel.fromJson(jsonDecode(event.toString())));
+      var model = NativeEventModel.fromJson(jsonDecode(event.toString()));
+      if (viewId == model.duration?.viewId ||
+          viewId == model.error?.viewId ||
+          viewId == model.quality?.viewId ||
+          viewId == model.state?.viewId) {
+        onEvent(NativeEventModel.fromJson(jsonDecode(event.toString())));
+      }
     });
   }
 

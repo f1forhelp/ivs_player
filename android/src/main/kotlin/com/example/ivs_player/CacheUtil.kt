@@ -2,6 +2,8 @@ package com.example.ivs_player
 
 import android.content.Context
 import com.amazonaws.ivs.player.PlayerView
+import io.flutter.view.TextureRegistry
+import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 
 
 object CacheUtil {
@@ -10,14 +12,14 @@ object CacheUtil {
 //    private init(){}
 //
     private var maxInstanceCount: Int = 5
-    private var playerCache = HashMap<Long,PlayerView >()
+    private var playerCache = HashMap<Long,IvsPlayer >()
 //
-    fun getPlayerView(key:Long): PlayerView? {
+    fun getPlayer(key:Long): IvsPlayer? {
         return playerCache[key]
     }
 
 
-    fun setPlayerView(key:Long,playerInstance:PlayerView) {
+    fun setPlayer(key:Long,playerInstance:IvsPlayer) {
         playerCache[key] = playerInstance
     }
 
@@ -25,4 +27,9 @@ object CacheUtil {
 //        playerCache[key]?.player?.removeListener(ivsPlayerView)
         playerCache.remove(key)
     }
+}
+
+class CacheModel{
+    lateinit var ivsPlayer: IvsPlayer
+    lateinit var surfaceTextureEntry: TextureRegistry.SurfaceTextureEntry
 }

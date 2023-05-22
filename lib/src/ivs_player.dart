@@ -39,6 +39,9 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
   @override
   void initState() {
     _ivsPlayerController = widget.ivsPlayerController;
+    _ivsPlayerController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -46,13 +49,12 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
 
   @override
   void dispose() {
-    _ivsPlayerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("SetState Is Called");
+    print("SetState Is Called-${_ivsPlayerController.isPlayerInitialized}");
     bool v = false;
     // This is used in the platform side to register the view.
     // Pass parameters to the platform side.
@@ -120,6 +122,21 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
                       },
                     );
                   } else {
+                    if (_ivsPlayerController.isPlayerInitialized) {
+                      print("Initialized-Yes-${_ivsPlayerController._viewId}");
+                      return Texture(
+                        filterQuality: FilterQuality.none,
+                        textureId: _ivsPlayerController._viewId,
+                        // textureId: 7,
+                        freeze: false,
+                        // filterQuality: FilterQuality.none,
+                        // filterQuality: FilterQuality.high,
+                      );
+                    } else {
+                      print("Initialized-Not");
+                      return SizedBox();
+                    }
+
                     return AndroidView(
                       viewType: IvsConstants.viewTypeIvsPlayer,
                       layoutDirection: TextDirection.ltr,

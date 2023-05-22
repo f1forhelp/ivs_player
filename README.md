@@ -13,3 +13,5 @@ For help getting started with Flutter development, view the
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+Known issue android -
+If goback and come again faster screen freezes. Need to gaback slowly and comeagain.

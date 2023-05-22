@@ -12,56 +12,46 @@ import SeekMessage
 import ViewMessage
 import VolumeMessage
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.provider.CalendarContract.Colors
-import android.util.Log
-import android.view.View
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import android.view.Surface
 import com.amazonaws.ivs.player.*
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.EventChannel.StreamHandler
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.platform.PlatformView
+import io.flutter.view.TextureRegistry
 import java.nio.ByteBuffer
 import kotlin.math.roundToLong
 
-internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationParams: Map<String?, Any?>?, messenger: BinaryMessenger) : PlatformView,IvsPlayerApi {
+class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTextureEntry,binaryMessenger: BinaryMessenger) {
 
     var viewId:Long
+    private lateinit var ivsPlayer:Player
     private var streamChannel:EventChannel
     private var eventSink:EventSink? = null
+    lateinit var surface: Surface;
 //    private val textView: TextView
 
-    override fun getView(): View {
-        return CacheUtil.getPlayerView(viewId)?.rootView!!
-    }
-
-    override fun dispose() {}
+//    override fun getView(): View {
+//        return CacheUtil.getPlayerView(viewId)?.rootView!!
+//    }
+//
+//    override fun dispose() {}
 
     init {
-        this.viewId = viewId
-        val ivsPlayer:PlayerView = PlayerView(context)
+        this.viewId = textureRegistry.id()
+        val ivsPlayerView:PlayerView = PlayerView(context)
+
+        surface =Surface(textureRegistry.surfaceTexture())
+        ivsPlayerView.player.setSurface(surface)
 
 //        ivsPlayer.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
-        ivsPlayer.controlsEnabled = false;
-        ivsPlayer.controls.showControls(false)
+        ivsPlayerView.controlsEnabled = false;
+        ivsPlayerView.controls.showControls(false)
 //        val medi:MediaPlayer = MediaPlayer(context)
 
-
-
-
-//        ivsPlayer.controls.setPlayer(MediaPlayer(context))
-        IvsPlayerApi.setUp(messenger,this)
-        streamChannel = EventChannel( messenger,"EventChannelPlayerIvs")
+        this.ivsPlayer = ivsPlayerView.player;
+        streamChannel = EventChannel( binaryMessenger,"EventChannelPlayerIvs")
         streamChannel.setStreamHandler(object : StreamHandler{
 
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
@@ -73,7 +63,6 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
             }
 
         })
-        CacheUtil.setPlayerView(this.viewId, ivsPlayer)
         handlePlayerEvents()
 //        Player player = playerView.getPlayer();
 //// Set up to receive playback events and errors
@@ -90,7 +79,7 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
 
 
     private fun handlePlayerEvents() {
-        CacheUtil.getPlayerView(viewId)?.player?.apply {
+        ivsPlayer.apply {
             // Listen to changes on the player
             addListener(object : Player.Listener() {
                 override fun onAnalyticsEvent(p0: String, p1: String) {}
@@ -109,7 +98,7 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
                 override fun onError(p0: PlayerException) {
                     fun data(v:String,id:Int) :String{
                         return """
-                        {"error":{"value":$v,"viewId":$id}}
+                        {"error":{"value":"${v.toString()}","viewId":$id}}
                         """;
                     }
                     eventSink?.success(data(p0.toString(),viewId.toInt()))
@@ -165,69 +154,64 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
     }
 
 
-    override fun autoQualityMode(mode: AutoQualityModeMessage): Boolean {
-        val p = CacheUtil.getPlayerView( mode.viewId)?.player
+     fun autoQualityMode(mode: AutoQualityModeMessage): Boolean {
+
         return if(mode.autoQualityMode != null){
-            p?.isAutoQualityMode = mode.autoQualityMode
+            ivsPlayer.isAutoQualityMode = mode.autoQualityMode
             mode.autoQualityMode
         }else{
-            p?.isAutoQualityMode ?: true
+            ivsPlayer.isAutoQualityMode ?: true
         }
     }
 
 
     //TODO: talk to amazon to make a setter for the same.
-    override fun looping(loopingMessage: LoopingMessage): Boolean {
-        val p = CacheUtil.getPlayerView( loopingMessage.viewId)?.player
+     fun looping(loopingMessage: LoopingMessage): Boolean {
         return if(loopingMessage.looping != null){
-            p?.setLooping(loopingMessage.looping)
+            ivsPlayer.setLooping(loopingMessage.looping)
             loopingMessage.looping
         }else{
             false;
         }
     }
 
-    override fun mute(mutedMessage: MutedMessage): Boolean {
-        val p = CacheUtil.getPlayerView( mutedMessage.viewId)?.player
-        if(mutedMessage.muted != null){
-            p?.isMuted = mutedMessage.muted
-            return mutedMessage.muted
+     fun mute(mutedMessage: MutedMessage): Boolean {
+        return if(mutedMessage.muted != null){
+            ivsPlayer.isMuted = mutedMessage.muted
+            mutedMessage.muted
         }else{
-            return  p?.isMuted ?: false
+            ivsPlayer.isMuted ?: false
         }
     }
 
-    override fun playbackRate(playbackRateMessage: PlaybackRateMessage): Double {
-        val p = CacheUtil.getPlayerView( playbackRateMessage.viewId)?.player
-        if(playbackRateMessage.playbackRate != null){
-            p?.playbackRate = (playbackRateMessage.playbackRate).toFloat()
-            return playbackRateMessage.playbackRate
+     fun playbackRate(playbackRateMessage: PlaybackRateMessage): Double {
+        return if(playbackRateMessage.playbackRate != null){
+            ivsPlayer.playbackRate = (playbackRateMessage.playbackRate).toFloat()
+            playbackRateMessage.playbackRate
         }else{
-            return  p?.playbackRate?.toDouble() ?: 0.0
+            ivsPlayer.playbackRate.toDouble() ?: 0.0
         }
     }
 
-    override fun volume(volumeMessage: VolumeMessage): Double {
-        val p = CacheUtil.getPlayerView( volumeMessage.viewId)?.player
-        if(volumeMessage.volume != null){
-            p?.volume = (volumeMessage.volume).toFloat()
-            return volumeMessage.volume
+     fun volume(volumeMessage: VolumeMessage): Double {
+        return if(volumeMessage.volume != null){
+            ivsPlayer.volume = (volumeMessage.volume).toFloat()
+            volumeMessage.volume
         }else{
-            return  p?.volume?.toDouble() ?: 0.0
+            ivsPlayer.volume.toDouble() ?: 0.0
         }
     }
 
-    override fun videoDuration(viewMessage: ViewMessage): Double {
-        val p = CacheUtil.getPlayerView( viewMessage.viewId)?.player
-        return p?.duration?.toDouble() ?: 0.0
+     fun videoDuration(viewMessage: ViewMessage): Double {
+        return ivsPlayer.duration.toDouble() ?: 0.0
     }
 
-    override fun playbackPosition(viewMessage: ViewMessage): Double {
-        return CacheUtil.getPlayerView( viewMessage.viewId)?.player?.position?.toDouble() ?: 0.0
+     fun playbackPosition(viewMessage: ViewMessage): Double {
+        return ivsPlayer.position.toDouble() ?: 0.0
     }
 
-    override fun qualities(viewMessage: ViewMessage): List<FQuality> {
-        val q = CacheUtil.getPlayerView( viewMessage.viewId)?.player?.qualities?.toList() ?: emptyList()
+     fun qualities(viewMessage: ViewMessage): List<FQuality> {
+        val q = ivsPlayer.qualities.toList() ?: emptyList()
         val qualities = mutableListOf<FQuality>()
         for (quality: Quality in q){
             qualities.add(FQuality(quality.name,quality.height.toLong(),quality.width.toLong()))
@@ -235,41 +219,43 @@ internal class FlutterIvsPlayerView(context: Context, viewId: Long, creationPara
         return qualities
     }
 
-    override fun quality(qualityMessage: FQualityMessage): FQuality {
-        val p = CacheUtil.getPlayerView( qualityMessage.viewId)?.player
+     fun quality(qualityMessage: FQualityMessage): FQuality {
         if(qualityMessage.quality != null){
 
-            for (quality: Quality in p?.qualities?.toList() ?: emptyList()){
+            for (quality: Quality in ivsPlayer.qualities.toList() ?: emptyList()){
                 if(quality.name == qualityMessage.quality.name){
-                    p?.quality = quality
+                    ivsPlayer.quality = quality
                     break
                 }
             }
         }
-        val q = p?.quality
-        return   FQuality( q?.name ?: "", q?.height?.toLong() ?: 0, q?.width?.toLong() ?: 0)
+        val q = ivsPlayer.quality
+        return   FQuality( q.name ?: "", q.height.toLong() ?: 0, q.width.toLong() ?: 0)
     }
 
-    override fun pause(viewMessage: ViewMessage) {
-        CacheUtil.getPlayerView( viewMessage.viewId)?.player?.pause()
+     fun pause(viewMessage: ViewMessage) {
+        ivsPlayer.pause()
     }
 
-    override fun load(loadMessage: LoadMessage) {
-            CacheUtil.getPlayerView( loadMessage.viewId)?.player?.load(Uri.parse(loadMessage.url))
+     fun load(loadMessage: LoadMessage) {
+        ivsPlayer.load(Uri.parse(loadMessage.url))
     }
 
-    override fun play(viewMessage: ViewMessage) {
-            CacheUtil.getPlayerView( viewMessage.viewId)?.player?.play()
+     fun play(viewMessage: ViewMessage) {
+        ivsPlayer.play()
     }
 
-    override fun seekTo(seekMessage: SeekMessage) {
-        io.flutter.Log.d("DURATION_SENT","${seekMessage.seconds*1000}")
-        CacheUtil.getPlayerView( seekMessage.viewId)?.player?.seekTo((seekMessage.seconds*1000).roundToLong())
+     fun seekTo(seekMessage: SeekMessage) {
+        ivsPlayer.seekTo((seekMessage.seconds*1000).roundToLong())
 //        CacheUtil.getPlayerView( seekMessage.viewId)?.player?.seekTo(1000*120)
     }
 
-    override fun dispose(viewMessage: ViewMessage) {
-        CacheUtil.getPlayerView( viewMessage.viewId)?.player?.release()
-        CacheUtil.removePlayer( viewMessage.viewId)
+    fun dispose(){
+
+//        ivsPlayer.removeListener(ivsPlayer)
+        ivsPlayer.release();
+        surface.release();
+        
     }
+
 }

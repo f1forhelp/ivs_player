@@ -52,55 +52,53 @@ class IvsPlayerController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    await _isPlayerViewLoaded.future;
+    var res = await IvsPlayerApi().create();
+    _viewId = res ?? 0;
+    // await _isPlayerViewLoaded.future;
     _isPlayerInitialized = true;
-    PlayerEvents().getPlayerStateStream(
-      (p0) {
-        print("TESTDATA-${p0.toString()}");
-        print("TESTDATA-2-${_currentAuality.name}");
-        _ivsPlayerNativeEvent = p0;
-        if (p0.duration?.value != null &&
-            (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
-          print("TESTDATA-1-${p0.toString()}");
-          _totalDuration = (p0.duration?.value)!;
-          durationListener.totalDuration = _totalDuration;
-        }
+    PlayerEvents().getPlayerStateStream((p0) {
+      print("TESTDATA-${p0.toString()}");
+      _ivsPlayerNativeEvent = p0;
+      if (p0.duration?.value != null &&
+          (p0.duration?.value?.inMilliseconds ?? 0) > 1) {
+        _totalDuration = (p0.duration?.value)!;
+        durationListener.totalDuration = _totalDuration;
+      }
 
-        if (_currentAuality.name != p0.quality?.name &&
-            p0.quality?.name != null) {
-          _currentAuality = p0.quality ?? Quality();
-        }
+      if (_currentAuality.name != p0.quality?.name &&
+          p0.quality?.name != null) {
+        _currentAuality = p0.quality ?? Quality();
+      }
 
-        switch (p0.state?.value) {
-          case NativePlayerState.playing:
-            // if (!_isPlaying) {
-            //   durationListener.stop();
-            // }
-            _isPlaying = true;
-            durationListener.start();
-            break;
-          case NativePlayerState.buffering:
-            durationListener.pause();
-            break;
-          case NativePlayerState.ended:
-            _isPlaying = false;
-            // durationListener.start();
-            break;
-          case NativePlayerState.idle:
-            _isPlaying = false;
-            durationListener.pause();
-            break;
-          case NativePlayerState.ready:
-            _isPlaying = false;
-            durationListener.pause();
-            var q = qualities();
-            break;
-          default:
-          //Player State is unknown.
-        }
-        notifyListeners();
-      },
-    );
+      switch (p0.state?.value) {
+        case NativePlayerState.playing:
+          // if (!_isPlaying) {
+          //   durationListener.stop();
+          // }
+          _isPlaying = true;
+          durationListener.start();
+          break;
+        case NativePlayerState.buffering:
+          durationListener.pause();
+          break;
+        case NativePlayerState.ended:
+          _isPlaying = false;
+          // durationListener.start();
+          break;
+        case NativePlayerState.idle:
+          _isPlaying = false;
+          durationListener.pause();
+          break;
+        case NativePlayerState.ready:
+          _isPlaying = false;
+          durationListener.pause();
+          // pause();
+          break;
+        default:
+        //Player State is unknown.
+      }
+      notifyListeners();
+    }, _viewId);
     notifyListeners();
   }
 
@@ -108,8 +106,9 @@ class IvsPlayerController extends ChangeNotifier {
     await IvsPlayerApi().load(
       LoadMessage(viewId: _viewId, url: url),
     );
+    // await pause();
     // IvsPlayerApi().mute(MutedMessage(viewId: _viewId, muted: true));
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<bool> autoQualityMode({bool? v}) async {
@@ -198,8 +197,8 @@ class IvsPlayerController extends ChangeNotifier {
 
   @override
   void dispose() async {
-    durationListener.dispose();
     await IvsPlayerApi().dispose(ViewMessage(viewId: _viewId));
+    durationListener.dispose();
     super.dispose();
   }
 }

@@ -166,6 +166,7 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
+                          shadows: iconShadow,
                         ),
                       );
                     }),

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:pigeon/pigeon.dart';
 
-//Run this commnad for changes to be visible "flutter pub run pigeon --input pigeons/messages.dart"
+//Run this commnad for changes to be visible "dart run pigeon --input pigeons/messages.dart"
 @ConfigurePigeon(PigeonOptions(
     dartOut: "lib/src/player_api.dart",
     swiftOptions: SwiftOptions(),
@@ -19,6 +19,7 @@ abstract class IvsPlayerApi {
   double playbackPosition(ViewMessage viewMessage);
   List<FQuality> qualities(ViewMessage viewMessage);
   FQuality quality(FQualityMessage qualityMessage);
+  int? create();
 
   void pause(ViewMessage viewMessage);
   void load(LoadMessage loadMessage);
