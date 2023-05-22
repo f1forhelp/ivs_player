@@ -59,7 +59,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   void dispose() {
     _ivsPlayerController1.dispose();
-    _ivsPlayerController2.dispose();
+    // _ivsPlayerController2.dispose();
     super.dispose();
   }
 
@@ -68,8 +68,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
     await _ivsPlayerController1.load(url: shortCtVideo);
     // await _ivsPlayerController1.mute(v: false);
     // await _ivsPlayerController1.volume(v: 0.9);
-    await _ivsPlayerController2.initialize();
-    await _ivsPlayerController2.load(url: ctSample1);
+    // await _ivsPlayerController2.initialize();
+    // await _ivsPlayerController2.load(url: ctSample1);
     // await _ivsPlayerController3.initialize();
     // await _ivsPlayerController3.load(url: ctSample3);
     // await _ivsPlayerController4.initialize();
@@ -103,10 +103,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
                 ivsPlayerController: _ivsPlayerController1,
               ),
-              BaseIvsPlayer(
-                controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
-                ivsPlayerController: _ivsPlayerController2,
-              ),
+              // BaseIvsPlayer(
+              //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+              //   ivsPlayerController: _ivsPlayerController2,
+              // ),
               // BaseIvsPlayer(
               //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
               //   ivsPlayerController: _ivsPlayerController3,
