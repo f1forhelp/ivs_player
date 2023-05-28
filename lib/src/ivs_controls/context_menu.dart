@@ -100,7 +100,7 @@ class _ContextMenuState extends State<ContextMenu> {
                       right: 14,
                       bottom: MediaQuery.of(context).viewPadding.bottom + 18,
                     ),
-                    child: QualityPanel(
+                    child: QualityMenu(
                         ivsPlayerController: widget.ivsPlayerController),
                   );
                 },

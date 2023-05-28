@@ -4,8 +4,10 @@ import 'package:ivs_player/src/Model/native_event_model/quality.dart';
 
 part 'context_menu.dart';
 part 'play_pause_button.dart';
-part 'quality_panel.dart';
+part 'quality_menu.dart';
 part 'playback_speed_panel.dart';
+part 'full_screen_button.dart';
+part 'custom_slider.dart';
 
 String _getDurationFormatted(Duration du) {
   var sec = du.inSeconds % 60;
@@ -19,6 +21,25 @@ String _getDurationFormatted(Duration du) {
   } else {
     return "${minutePadding + min.toString()}:${secondPadding + sec.toString()}";
   }
+}
+
+Future _showCommonModalSheet(BuildContext context, Widget child) async {
+  await showModalBottomSheet(
+    useSafeArea: true,
+    context: context,
+    backgroundColor: Colors.transparent,
+    constraints: BoxConstraints(maxWidth: 440),
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: 14,
+          right: 14,
+          bottom: MediaQuery.of(context).viewPadding.bottom + 18,
+        ),
+        child: child,
+      );
+    },
+  );
 }
 
 class BasicPlayerControls extends StatefulWidget {
@@ -56,51 +77,13 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Visibility(
-                visible: !(widget.ivsPlayerController.currentQuality.name ==
-                        "unknown" ||
-                    widget.ivsPlayerController.currentQuality.name == null),
-                child: Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.white, width: 1.2),
-                  ),
-                  child: Text(
-                    widget.ivsPlayerController.currentQuality.name ?? "",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 8,
-              ),
               InkWell(
                 onTap: () {
-                  showModalBottomSheet(
-                    useSafeArea: true,
-                    context: context,
-                    backgroundColor: Colors.transparent,
-                    constraints: BoxConstraints(maxWidth: 440),
-                    builder: (context) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          left: 14,
-                          right: 14,
-                          bottom:
-                              MediaQuery.of(context).viewPadding.bottom + 18,
-                        ),
-                        child: ContextMenu(
-                            ivsPlayerController: widget.ivsPlayerController),
-                      );
-                    },
+                  _showCommonModalSheet(
+                    context,
+                    ContextMenu(
+                        ivsPlayerController: widget.ivsPlayerController),
                   );
-                  // Scaffold.of(context).showBottomSheet((context) => ContextMenu(
-                  //     ivsPlayerController: widget.ivsPlayerController));
                 },
                 child: Icon(
                   Icons.settings,
@@ -141,18 +124,6 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               ),
             ],
           ),
-          // IconButton(
-          //   onPressed: () {
-          //     //   tempTimer.seekTo(
-          //     //   durationToSeek: Duration(milliseconds: 12),
-          //     // );
-          //     widget.ivsPlayerController.seekTo(0);
-          //   },
-          //   icon: Icon(
-          //     Icons.access_alarm,
-          //     color: Colors.white,
-          //   ),
-          // ),
           Column(
             children: [
               Align(
@@ -176,173 +147,46 @@ class _BasicPlayerControlsState extends State<BasicPlayerControls> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: AnimatedBuilder(
-                  animation: widget.ivsPlayerController.durationListener,
-                  builder: (context, child) {
-                    return CustomSlider(
-                      currentValueInPercentage: widget.ivsPlayerController
-                          .durationListener.currentDurationInPercentage,
-                      getCurrentDurationOnDrag: (p0) {
-                        // widget.ivsPlayerController
-                        //     .seekTo(p0.inMilliseconds / 1000);
-                      },
-                      getCurrentPercentageOnDrag: (p0) {
-                        // widget.ivsPlayerController.seekController.value = p0 / 100;
-                      },
-                      // currentValueInPercentage:
-                      //     widget.ivsPlayerController.seekController.value,
-                      getCurrentPercentageOnDragStop: (p0) {
-                        widget.ivsPlayerController.seekTo(p0 *
-                            widget.ivsPlayerController.totalDuration.inSeconds);
-                      },
-                      getCurrentDurationOnDragStop: (d) {
-                        // widget.ivsPlayerController
-                        //     .seekTo(d.inMilliseconds / 1000);
-                      },
-                      // key: Key(
-                      //     widget.ivsPlayerController.totalDuration.toString()),
-                      activeTrackColor: Colors.white,
-                      bufferedTrackColor: Colors.grey.shade400,
-                      inactiveTrackColor: Colors.white30,
-                      totalDuration: widget.ivsPlayerController.totalDuration,
-                      width: double.infinity,
-                      trackHeight: 3,
-                      thumbRadius: 10,
-                    );
-                  },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: AnimatedBuilder(
+                        animation: widget.ivsPlayerController.durationListener,
+                        builder: (context, child) {
+                          return CustomSlider(
+                            currentValueInPercentage: widget.ivsPlayerController
+                                .durationListener.currentDurationInPercentage,
+                            getCurrentDurationOnDrag: (p0) {},
+                            getCurrentPercentageOnDrag: (p0) {},
+                            getCurrentPercentageOnDragStop: (p0) {
+                              widget.ivsPlayerController.seekTo(p0 *
+                                  widget.ivsPlayerController.totalDuration
+                                      .inSeconds);
+                            },
+                            getCurrentDurationOnDragStop: (d) {},
+                            activeTrackColor: Colors.white,
+                            bufferedTrackColor: Colors.grey.shade400,
+                            inactiveTrackColor: Colors.white30,
+                            totalDuration:
+                                widget.ivsPlayerController.totalDuration,
+                            width: double.infinity,
+                            trackHeight: 3,
+                            thumbRadius: 10,
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: FullScreenButton(
+                          ivsPlayerController: widget.ivsPlayerController),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CustomSlider extends StatefulWidget {
-  final double width;
-  final double trackHeight;
-  final double thumbRadius;
-  final Duration totalDuration;
-  final Color activeTrackColor;
-  final Color inactiveTrackColor;
-  final Color bufferedTrackColor;
-  final void Function(Duration) getCurrentDurationOnDragStop;
-  final void Function(double) getCurrentPercentageOnDragStop;
-  final void Function(Duration) getCurrentDurationOnDrag;
-  final void Function(double) getCurrentPercentageOnDrag;
-  final double currentValueInPercentage;
-
-  const CustomSlider({
-    super.key,
-    required this.width,
-    required this.trackHeight,
-    required this.thumbRadius,
-    required this.totalDuration,
-    required this.activeTrackColor,
-    required this.inactiveTrackColor,
-    required this.bufferedTrackColor,
-    required this.getCurrentDurationOnDragStop,
-    required this.getCurrentPercentageOnDragStop,
-    required this.currentValueInPercentage,
-    required this.getCurrentDurationOnDrag,
-    required this.getCurrentPercentageOnDrag,
-  });
-
-  @override
-  State<CustomSlider> createState() => _CustomSliderState();
-}
-
-class _CustomSliderState extends State<CustomSlider>
-    with SingleTickerProviderStateMixin {
-  double innerLeftPosition = 0;
-  double percentage = 0;
-
-  String duration = "";
-  bool isDragging = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  // double getLeftPadding({double? leftPadding}) {
-
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.thumbRadius * 2,
-      width: widget.width,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return GestureDetector(
-            onHorizontalDragUpdate: (details) {
-              double actualPosi = details.localPosition.dx - widget.thumbRadius;
-              if (actualPosi >= (-widget.thumbRadius) &&
-                  actualPosi <= (constraints.minWidth - widget.thumbRadius)) {
-                innerLeftPosition = actualPosi;
-
-                percentage = (innerLeftPosition + widget.thumbRadius) /
-                    (constraints.minWidth);
-                widget.getCurrentDurationOnDrag(Duration());
-                widget.getCurrentPercentageOnDrag(percentage);
-              }
-              // print(inne);
-              isDragging = true;
-              setState(() {});
-            },
-            onHorizontalDragEnd: (details) {
-              isDragging = false;
-              widget.getCurrentDurationOnDragStop(Duration());
-              widget.getCurrentPercentageOnDragStop(percentage);
-              setState(() {});
-            },
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment(-1, 0),
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(10),
-                      right: Radius.circular(10),
-                    ),
-                  ),
-                  width: widget.width,
-                  height: widget.trackHeight,
-                ),
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 20),
-                  left: isDragging
-                      ? innerLeftPosition
-                      : widget.currentValueInPercentage *
-                              (constraints.minWidth) -
-                          widget.thumbRadius,
-                  // left:
-                  // widget.currentValueInPercentage * (constraints.minWidth) -
-                  //     widget.thumbRadius,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.4),
-                      shape: BoxShape.circle,
-                    ),
-                    width: widget.thumbRadius * 2,
-                    height: widget.thumbRadius * 2,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }

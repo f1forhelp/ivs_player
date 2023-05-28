@@ -18,12 +18,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
   final IvsPlayerController _ivsPlayerController3 = IvsPlayerController();
   final IvsPlayerController _ivsPlayerController4 = IvsPlayerController();
 
-  //   const val DEFAULT = "Pre-defined stream 1"
-  // const val LINK = "https://4c62a87c1810.us-west-2.playback.live-video.net/api/video/v1/us-west-2.049054135175.channel.GHRwjPylmdXm.m3u8"
-
-  // const val PORTRAIT_OPTION = "Pre-defined stream 2"
-  // const val LIVE_PORTRAIT_LINK = "https://4c62a87c1810.us-west-2.playback.live-video.net/api/video/v1/us-west-2.049054135175.channel.GHRwjPylmdXm.m3u8?allow_source=true"
-
   String ivsQuestionLivePortrait =
       "https://4c62a87c1810.us-west-2.playback.live-video.net/api/video/v1/us-west-2.049054135175.channel.GHRwjPylmdXm.m3u8?allow_source=true";
 
@@ -40,40 +34,35 @@ class _PlayerScreenState extends State<PlayerScreen> {
   String ctSample3 =
       "https://static.crimetak.in/production/output-videos-transcoded/vod_05_Apr_2023_Bataulebazi-5/video.m3u8";
 
-  // final BetterPlayerController betterPlayerController = BetterPlayerController(
-  //     BetterPlayerConfiguration(),
-  //     betterPlayerDataSource: BetterPlayerDataSource(
-  //         BetterPlayerDataSourceType.network,
-  //         "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8"));
-
   @override
   void initState() {
     super.initState();
-    // _ivsPlayerController1.addListener(() {
-    //   setState(() {});
-    // });
     initPlayer1();
     // initPlayer2();
+    // initPlayer3();
   }
 
   @override
   void dispose() {
     _ivsPlayerController1.dispose();
     // _ivsPlayerController2.dispose();
+    // _ivsPlayerController3.dispose();
     super.dispose();
   }
 
   initPlayer1() async {
     await _ivsPlayerController1.initialize();
-    await _ivsPlayerController1.load(url: shortCtVideo);
-    // await _ivsPlayerController1.mute(v: false);
-    // await _ivsPlayerController1.volume(v: 0.9);
-    // await _ivsPlayerController2.initialize();
-    // await _ivsPlayerController2.load(url: ctSample1);
-    // await _ivsPlayerController3.initialize();
-    // await _ivsPlayerController3.load(url: ctSample3);
-    // await _ivsPlayerController4.initialize();
-    // await _ivsPlayerController4.load(url: ctSample2);
+    await _ivsPlayerController1.load(url: ctSample1);
+  }
+
+  initPlayer2() async {
+    await _ivsPlayerController2.initialize();
+    await _ivsPlayerController2.load(url: ctSample2);
+  }
+
+  initPlayer3() async {
+    await _ivsPlayerController3.initialize();
+    await _ivsPlayerController3.load(url: ivsQuestionLivePortrait);
   }
 
   // initPlayer2() async {
@@ -90,7 +79,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     List<Shadow> iconShadow = const [
       Shadow(color: Colors.black45, blurRadius: 4)
     ];
-    print("SetState Is Called-${_ivsPlayerController1.isPlayerInitialized}");
     return Scaffold(
       // backgroundColor: Colors.,
       body: SafeArea(
@@ -103,6 +91,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
                 ivsPlayerController: _ivsPlayerController1,
               ),
+              // BaseIvsPlayer(
+              //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+              //   ivsPlayerController: _ivsPlayerController2,
+              // ),
+              // BaseIvsPlayer(
+              //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+              //   ivsPlayerController: _ivsPlayerController3,
+              // ),
+              // BaseIvsPlayer(
+              //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+              //   ivsPlayerController: _ivsPlayerController2,
+              // ),
               // BaseIvsPlayer(
               //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
               //   ivsPlayerController: _ivsPlayerController2,

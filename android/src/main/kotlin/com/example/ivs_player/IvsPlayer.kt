@@ -53,7 +53,7 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
 //        val medi:MediaPlayer = MediaPlayer(context)
 
         this.ivsPlayer = ivsPlayerView.player;
-        streamChannel = EventChannel( binaryMessenger,"EventChannelPlayerIvs")
+        streamChannel = EventChannel( binaryMessenger,"EventChannelPlayerIvs_id=${this.viewId}")
         streamChannel.setStreamHandler(object : StreamHandler{
 
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
@@ -61,6 +61,7 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
             }
 
             override fun onCancel(arguments: Any?) {
+                eventSink?.endOfStream()
                 TODO("Not yet implemented")
             }
 

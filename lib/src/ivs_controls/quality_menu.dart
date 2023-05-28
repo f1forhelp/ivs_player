@@ -1,14 +1,14 @@
 part of 'ivs_player_controls.dart';
 
-class QualityPanel extends StatefulWidget {
+class QualityMenu extends StatefulWidget {
   final IvsPlayerController ivsPlayerController;
 
-  const QualityPanel({super.key, required this.ivsPlayerController});
+  const QualityMenu({super.key, required this.ivsPlayerController});
   @override
-  State<QualityPanel> createState() => _QualityPanelState();
+  State<QualityMenu> createState() => _QualityMenuState();
 }
 
-class _QualityPanelState extends State<QualityPanel> {
+class _QualityMenuState extends State<QualityMenu> {
   List<Quality?> quals = [];
   Quality currentQuality = Quality();
   bool isLooping = false;

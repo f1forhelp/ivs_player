@@ -180,18 +180,14 @@ class IvsPlayerController extends ChangeNotifier {
 
     durationListener.seekTo(
         durationToSeek: Duration(milliseconds: duratInMili));
-    try {
-      await IvsPlayerApi().seekTo(
-        SeekMessage(
-          viewId: _viewId,
-          seconds: duratInMili > _totalDuration.inMilliseconds
-              ? (_totalDuration.inMilliseconds / 1000)
-              : seconds,
-        ),
-      );
-    } catch (e) {
-      print("DURAT--3--$e");
-    }
+    await IvsPlayerApi().seekTo(
+      SeekMessage(
+        viewId: _viewId,
+        seconds: duratInMili > _totalDuration.inMilliseconds
+            ? (_totalDuration.inMilliseconds / 1000)
+            : seconds,
+      ),
+    );
   }
 
   @override
