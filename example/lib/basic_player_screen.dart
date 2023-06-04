@@ -87,7 +87,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              BaseIvsPlayer(
+              IvsPlayerWithcControls(
                 controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
                 ivsPlayerController: _ivsPlayerController1,
               ),

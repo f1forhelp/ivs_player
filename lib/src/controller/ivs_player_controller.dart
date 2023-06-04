@@ -1,5 +1,4 @@
-part of 'ivs_player.dart';
-
+part of 'package:ivs_player/src/player/ivs_player.dart';
 // enum PlayerState { playerViewLoaded, playerViewNotLoaded }
 
 class IvsPlayerController extends ChangeNotifier {

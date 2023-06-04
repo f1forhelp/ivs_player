@@ -1,4 +1,4 @@
-part of 'ivs_player.dart';
+part of 'package:ivs_player/src/player/ivs_player.dart';
 
 class DurationListener extends ChangeNotifier {
   Timer? _timer;

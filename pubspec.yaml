@@ -1,10 +1,10 @@
 name: ivs_player
-description: A new Flutter project.
+description: Ivs Player.
 version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=2.19.2 <4.0.0'
   flutter: ">=2.5.0"
 
 dependencies:
