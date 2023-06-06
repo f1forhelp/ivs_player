@@ -12,8 +12,12 @@ import AmazonIVSPlayer.IVSQuality
 
 
 extension FlutterIvsPlayerView: IvsPlayerApi {
+    func create() throws -> Int64? {
+        <#code#>
+    }
+    
     func quality(qualityMessage: FQualityMessage) throws -> FQuality {
-        let p = CacheUtil.i.getPlayerView(key: qualityMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(qualityMessage.viewId))?.player
         if(qualityMessage.quality != nil){
             for qual in p?.qualities ?? []{
                 if(qual.name == qualityMessage.quality?.name){
@@ -23,17 +27,17 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
             }
         }
         let q = p?.quality
-        return   FQuality(name: q?.name ?? "", height:Int32( q?.height ?? 0), width:Int32( q?.width ?? 0))
+        return   FQuality(name: q?.name ?? "", height:Int64(Int32( q?.height ?? 0)), width:Int64(Int32( q?.width ?? 0)))
 
     }
     
     
     func qualities(viewMessage: ViewMessage) throws -> [FQuality] {
-        let q = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.qualities ?? []
+        let q = CacheUtil.i.getPlayerView(key: Int32(viewMessage.viewId))?.player?.qualities ?? []
         var qualities: [FQuality] = []
         
         for qual in q{
-            qualities.append(FQuality(name: qual.name, height: Int32( qual.height) , width: Int32( qual.width)))
+            qualities.append(FQuality(name: qual.name, height: Int64(Int32( qual.height)) , width: Int64(Int32( qual.width))))
         }
         return qualities
     }
@@ -44,12 +48,12 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
 
     
     func playbackPosition(viewMessage: ViewMessage) throws -> Double {
-        return CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.position.seconds ?? 0.0
+        return CacheUtil.i.getPlayerView(key: Int32(viewMessage.viewId))?.player?.position.seconds ?? 0.0
     }
     
     
     func autoQualityMode(mode: AutoQualityModeMessage) throws -> Bool {
-        let p = CacheUtil.i.getPlayerView(key: mode.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(mode.viewId))?.player
         if(mode.autoQualityMode != nil){
             p?.autoQualityMode = mode.autoQualityMode!
             return mode.autoQualityMode!
@@ -59,7 +63,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     }
     
     func looping(loopingMessage: LoopingMessage) throws -> Bool {
-        let p = CacheUtil.i.getPlayerView(key: loopingMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(loopingMessage.viewId))?.player
         if(loopingMessage.looping != nil){
             p?.looping = loopingMessage.looping!
             return loopingMessage.looping!
@@ -69,7 +73,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     }
     
     func mute(mutedMessage: MutedMessage) throws -> Bool {
-        let p = CacheUtil.i.getPlayerView(key: mutedMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(mutedMessage.viewId))?.player
         if(mutedMessage.muted != nil){
             p?.muted = mutedMessage.muted!
             return mutedMessage.muted!
@@ -79,7 +83,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     }
     
     func playbackRate(playbackRateMessage: PlaybackRateMessage) throws -> Double {
-        let p = CacheUtil.i.getPlayerView(key: playbackRateMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(playbackRateMessage.viewId))?.player
         if(playbackRateMessage.playbackRate != nil){
             p?.playbackRate = Float(playbackRateMessage.playbackRate ?? 0.0)
             return playbackRateMessage.playbackRate!
@@ -89,7 +93,7 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     }
     
     func volume(volumeMessage: VolumeMessage) throws -> Double {
-        let p = CacheUtil.i.getPlayerView(key: volumeMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(volumeMessage.viewId))?.player
         if(volumeMessage.volume != nil){
             p?.volume = Float(volumeMessage.volume ?? 0.0)
             return volumeMessage.volume!
@@ -99,29 +103,29 @@ extension FlutterIvsPlayerView: IvsPlayerApi {
     }
     
     func videoDuration(viewMessage: ViewMessage) throws -> Double {
-        let p = CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player
+        let p = CacheUtil.i.getPlayerView(key: Int32(viewMessage.viewId))?.player
         return p?.duration.seconds ?? 0.0
     }
     
     
     func seekTo(seekMessage: SeekMessage) throws {
-        CacheUtil.i.getPlayerView(key: seekMessage.viewId)?.player?.seek(to: CMTime(seconds: seekMessage.seconds, preferredTimescale: 1000))
+        CacheUtil.i.getPlayerView(key: Int32(seekMessage.viewId))?.player?.seek(to: CMTime(seconds: seekMessage.seconds, preferredTimescale: 1000))
     }
 
     func pause(viewMessage: ViewMessage) throws {
-        CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.pause()
+        CacheUtil.i.getPlayerView(key: Int32(viewMessage.viewId))?.player?.pause()
     }
     
     func load(loadMessage: LoadMessage) throws {
-        CacheUtil.i.getPlayerView(key: loadMessage.viewId)?.player?.load(URL(string: loadMessage.url))
+        CacheUtil.i.getPlayerView(key: Int32(loadMessage.viewId))?.player?.load(URL(string: loadMessage.url))
     }
     
     func play(viewMessage: ViewMessage) throws {
-        CacheUtil.i.getPlayerView(key: viewMessage.viewId)?.player?.play()
+        CacheUtil.i.getPlayerView(key: Int32(viewMessage.viewId))?.player?.play()
     }
     
     func dispose(viewMessage: ViewMessage) throws {
-        CacheUtil.i.removePlayer(key: viewMessage.viewId)
+        CacheUtil.i.removePlayer(key: Int32(viewMessage.viewId))
     }
 }
 

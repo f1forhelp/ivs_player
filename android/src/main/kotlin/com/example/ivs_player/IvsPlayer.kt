@@ -31,13 +31,6 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
     private var eventSink:EventSink? = null
     lateinit var surface: Surface;
     lateinit var textureRegistry: TextureRegistry.SurfaceTextureEntry
-//    private val textView: TextView
-
-//    override fun getView(): View {
-//        return CacheUtil.getPlayerView(viewId)?.rootView!!
-//    }
-//
-//    override fun dispose() {}
 
     init {
         this.textureRegistry = textureRegistry
@@ -67,13 +60,6 @@ class IvsPlayer(context: Context,textureRegistry: TextureRegistry.SurfaceTexture
 
         })
         handlePlayerEvents()
-//        Player player = playerView.getPlayer();
-//// Set up to receive playback events and errors
-//        player.addListener(this);
-//        textView = TextView(context)
-//        textView.textSize = 72f
-//        textView.setBackgroundColor(Color.rgb(255, 255, 255))
-//        textView.text = "Rendered on a native Android view (id: $id)"
     }
 
 

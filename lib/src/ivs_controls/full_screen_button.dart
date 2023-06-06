@@ -37,7 +37,7 @@ class _FullScreenVideoState extends State<FullScreenVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BaseIvsPlayer(
+      body: IvsPlayerWithcControls(
         ivsPlayerController: widget.ivsPlayerController,
         controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
       ),
