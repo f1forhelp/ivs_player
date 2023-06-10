@@ -15,18 +15,20 @@ class CacheUtil {
     private init(){}
     
      private var maxInstanceCount: Int = 5
-     private var playerCache: [Int32:IVSPlayerView]=[:]
+     private var playerCache: [Int32:IvsPlayer]=[:]
     
-     func getPlayerView(key:Int32) -> IVSPlayerView? {
+     func getPlayer(key:Int32) -> IvsPlayer? {
         return playerCache[key]
     }
     
-     func setPlayerView(key:Int32,playerInstance:IVSPlayerView) {
+     func setPlayer(key:Int32,playerInstance:IvsPlayer) {
         playerCache[key] = playerInstance
     }
     
     func removePlayer(key:Int32){
+        print(getPlayer(key: key))
         playerCache.removeValue(forKey: key)
+        print(getPlayer(key: key))
     }
 }
 

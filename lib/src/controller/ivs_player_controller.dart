@@ -51,8 +51,15 @@ class IvsPlayerController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    var res = await IvsPlayerApi().create();
-    _viewId = res ?? 0;
+    if (Platform.isAndroid) {
+      var res = await IvsPlayerApi().create();
+      _viewId = res ?? 0;
+    } else {
+      await _isPlayerViewLoaded.future;
+    }
+
+    // var res = await IvsPlayerApi().create();
+    // _viewId = res ?? 0;
     // await _isPlayerViewLoaded.future;
     _isPlayerInitialized = true;
     PlayerEvents().getPlayerStateStream((p0) {
@@ -191,8 +198,8 @@ class IvsPlayerController extends ChangeNotifier {
 
   @override
   void dispose() async {
-    await IvsPlayerApi().dispose(ViewMessage(viewId: _viewId));
     durationListener.dispose();
+    await IvsPlayerApi().dispose(ViewMessage(viewId: _viewId));
     super.dispose();
   }
 }

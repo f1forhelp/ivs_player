@@ -47,11 +47,6 @@ class _CustomSliderState extends State<CustomSlider>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   // double getLeftPadding({double? leftPadding}) {
 
   // }

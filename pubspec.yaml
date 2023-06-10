@@ -9,8 +9,6 @@ environment:
 
 dependencies:
   json_annotation: ^4.8.1
-  pausable_timer: ^1.0.0+7
-  video_player: ^2.6.0
   flutter:
     sdk: flutter
   flutter_web_plugins:

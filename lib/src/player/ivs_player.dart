@@ -42,14 +42,21 @@ class _BaseIvsPlayerState extends State<BaseIvsPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
+    Map<String, dynamic>? creationParams = <String, dynamic>{};
+    if (_ivsPlayerController._isPlayerViewLoaded.isCompleted) {
+      creationParams["viewId"] = _ivsPlayerController._viewId;
+    } else {
+      creationParams = null;
+    }
     return Builder(
       builder: (context) {
         if (Platform.isIOS) {
           return UiKitView(
             onPlatformViewCreated: (id) {
-              _ivsPlayerController._viewId = id;
-              if (!_ivsPlayerController._isPlayerViewLoaded.isCompleted) {
+              if (_ivsPlayerController._isPlayerViewLoaded.isCompleted) {
+                // creationParams["viewId"] = _ivsPlayerController._viewId;
+              } else {
+                _ivsPlayerController._viewId = id;
                 _ivsPlayerController._isPlayerViewLoaded.complete(true);
               }
             },

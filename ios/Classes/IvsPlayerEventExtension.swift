@@ -12,7 +12,7 @@ import AmazonIVSPlayer
 ///
 /// This property is key-value observable.
 /// @see `-[IVSPlayerDelegate player:didChangeState:]`
-extension FlutterIvsPlayerView{
+extension IvsPlayer{
     func player(_ player: IVSPlayer, didChangeState state: IVSPlayer.State) {
         func data (v:Int,id:Int32) -> String{
             return """
@@ -37,7 +37,7 @@ extension FlutterIvsPlayerView{
     }
 }
 
-extension FlutterIvsPlayerView:IVSPlayer.Delegate {
+extension IvsPlayer:IVSPlayer.Delegate {
     func player(_ player: IVSPlayer, didChangeDuration duration:AmazonIVSPlayer.CMTime) {
         func data (v:Double,id:Int32) -> String{
             return """
@@ -49,7 +49,7 @@ extension FlutterIvsPlayerView:IVSPlayer.Delegate {
 }
 
 
-extension FlutterIvsPlayerView {
+extension IvsPlayer {
     func player(_ player: IVSPlayer, didFailWithError error:AmazonIVSPlayer.NSError) {
         func data (v:NSError,id:Int32) -> String{
             return """
@@ -60,7 +60,7 @@ extension FlutterIvsPlayerView {
     }
 }
 
-extension FlutterIvsPlayerView {
+extension IvsPlayer {
     func player(_ player: IVSPlayer, didChangeQuality quality:IVSQuality?) {
         func data (w:Int,h:Int,name:String,id:Int32) -> String{
             return """

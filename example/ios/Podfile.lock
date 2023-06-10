@@ -1,5 +1,5 @@
 PODS:
-  - AmazonIVSPlayer (1.16.0)
+  - AmazonIVSPlayer (1.18.0)
   - better_player (0.0.1):
     - Cache (~> 6.0.0)
     - Flutter
@@ -15,7 +15,7 @@ PODS:
     - GCDWebServer (~> 3.5)
     - PINCache (>= 3.0.1-beta.3)
   - ivs_player (0.0.1):
-    - AmazonIVSPlayer
+    - AmazonIVSPlayer (= 1.18.0)
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -28,8 +28,6 @@ PODS:
   - PINCache/Core (3.0.3):
     - PINOperation (~> 1.2.1)
   - PINOperation (1.2.2)
-  - video_player_avfoundation (0.0.1):
-    - Flutter
   - wakelock (0.0.1):
     - Flutter
 
@@ -38,7 +36,6 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - ivs_player (from `.symlinks/plugins/ivs_player/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
 SPEC REPOS:
@@ -59,23 +56,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/ivs_player/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
-  video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
-  AmazonIVSPlayer: e9092086094e70ba1e39b3f6f57f623da05b4b27
+  AmazonIVSPlayer: 15b74392987e2385f9a859201273185f76d58959
   better_player: 2406bfe8175203c7a46fa15f9d778d73b12e1646
   Cache: 4ca7e00363fca5455f26534e5607634c820ffc2d
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   HLSCachingReverseProxyServer: 59935e1e0244ad7f3375d75b5ef46e8eb26ab181
-  ivs_player: ae58a94822a7c42ae6e978a6931b0ad12a4830a1
+  ivs_player: 01d7f6e7f377584545d32793d18d0661e6dffe46
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: daa34d4aa1d8449089be7d405b9d974abc4724c6
-  video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
