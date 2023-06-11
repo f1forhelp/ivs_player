@@ -181,15 +181,18 @@ class FLNativeViewFactory: NSObject, FlutterPlatformViewFactory {
 //        }
         
         let argu : Dictionary<String, Any>? = args as? Dictionary<String, Any>
-        var ivsP:IvsPlayer
-        if(argu != nil){
-           var viewId = argu!["viewId"] as? Int64
-            ivsP =  CacheUtil.i.getPlayer(key:Int32(viewId ?? 0))!
-        }else{
-            ivsP = IvsPlayer(binaryMessenger: messenger, withFrame: frame, viewIdentifier: viewId, arguments: args)
-        }
+        // var ivsP:IvsPlayer
+        // if(argu != nil){
+        //    var viewId = argu!["viewId"] as? Int64
+        //     ivsP =  CacheUtil.i.getPlayer(key:Int32(viewId ?? 0))!
+        // }else{
+        //     ivsP = IvsPlayer(binaryMessenger: messenger, withFrame: frame, viewIdentifier: viewId, arguments: args)
+        // }
         
-        return ivsP
+        return IvsPlayer(binaryMessenger: messenger, withFrame: frame, viewIdentifier: viewId, arguments: args)
+        // return ivsP
+
+
     }
     
     /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.

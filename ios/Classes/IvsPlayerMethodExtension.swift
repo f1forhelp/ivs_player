@@ -124,9 +124,9 @@ extension IvsPlayer {
     func dispose(viewMessage: ViewMessage) throws {
 //        ivsPlayerView.player?.removeTimeObserver(self)
 //        ivsPlayerView.player?.removeTimeObserver(self)
-        ivsPlayerView.player?.pause()
+        // ivsPlayerView.player?.pause()
         CacheUtil.i.removePlayer(key: Int32(viewId))
-        ivsPlayerView.player?.play()
+        // ivsPlayerView.player?.play()
     }
 }
 
