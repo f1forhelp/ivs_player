@@ -63,6 +63,7 @@ extension FlutterIvsPlayerView {
 extension FlutterIvsPlayerView {
     func player(_ player: IVSPlayer, didChangeQuality quality:IVSQuality?) {
         func data (w:Int,h:Int,name:String,id:Int32) -> String{
+            self.view()
             return """
                 {"quality":{"width":\(w),"height":\(h),"name":"\(name)","viewId":\(id)}}
             """;

@@ -19,10 +19,12 @@ class FlutterIvsPlayerView: NSObject, FlutterPlatformView {
     private let streamChannel:FlutterEventChannel
     var playerStateEventSink: FlutterEventSink?
     
+    let ivsPlayer:IVSPlayerView
     
     
     func view() -> UIView {
-        return CacheUtil.i.getPlayerView(key: viewId)!
+        return ivsPlayer
+//        return CacheUtil.i.getPlayerView(key: viewId)!
     }
     
     init(
@@ -32,7 +34,7 @@ class FlutterIvsPlayerView: NSObject, FlutterPlatformView {
         binaryMessenger messenger: FlutterBinaryMessenger
     ) {
         self.viewId = Int32(exactly: viewId) ?? 0
-        let ivsPlayer = IVSPlayerView()
+        ivsPlayer = IVSPlayerView(frame:frame)
         ivsPlayer.player = IVSPlayer()
         streamChannel = FlutterEventChannel(name: "EventChannelPlayerIvs", binaryMessenger: messenger)
         super.init()
