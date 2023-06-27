@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:ivs_player/ivs_player.dart';
 // import 'package:ivs_player/player_method.dart';
 import 'package:ivs_player_example/widgets.dart';
+import 'package:flutter_unity_widget_pro/flutter_unity_widget_pro.dart';
 
 class PlayerScreen extends StatefulWidget {
   const PlayerScreen({super.key});
@@ -37,15 +38,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
   void initState() {
     super.initState();
     initPlayer1();
-    // initPlayer2();
-    // initPlayer3();
+    initPlayer2();
+    initPlayer3();
   }
 
   @override
   void dispose() {
     _ivsPlayerController1.dispose();
-    // _ivsPlayerController2.dispose();
-    // _ivsPlayerController3.dispose();
+    _ivsPlayerController2.dispose();
+    _ivsPlayerController3.dispose();
     super.dispose();
   }
 
@@ -89,6 +90,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
               IvsPlayerWithcControls(
                 controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
                 ivsPlayerController: _ivsPlayerController1,
+              ),
+              IvsPlayerWithcControls(
+                controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+                ivsPlayerController: _ivsPlayerController2,
+              ),
+              IvsPlayerWithcControls(
+                controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
+                ivsPlayerController: _ivsPlayerController3,
               ),
               // BaseIvsPlayer(
               //   controls: (p0) => BasicPlayerControls(ivsPlayerController: p0),
